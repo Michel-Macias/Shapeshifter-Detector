@@ -1,7 +1,7 @@
 import argparse
 import os
 import json
-from src.core import get_file_signature, identify_type
+from src.core import get_file_signature, identify_type, calculate_hashes, calculate_entropy, extract_strings
 
 def check_mismatch(filepath, detected_type_info):
     """
@@ -28,6 +28,11 @@ def scan_file(filepath, report_list=None):
     signature = get_file_signature(filepath)
     type_info = identify_type(signature)
     
+    # Análisis Forense
+    hashes = calculate_hashes(filepath)
+    entropy = calculate_entropy(filepath)
+    strings = extract_strings(filepath)
+    
     file_type = type_info['type'] if type_info else "Desconocido"
     is_mismatch = check_mismatch(filepath, type_info)
     
@@ -36,6 +41,17 @@ def scan_file(filepath, report_list=None):
     print(f"Firma: {signature}")
     print(f"Tipo Detectado: {file_type}")
     
+    if hashes:
+        print(f"MD5: {hashes['md5']}")
+        print(f"SHA256: {hashes['sha256']}")
+    
+    print(f"Entropía: {entropy:.2f}")
+    if entropy > 7.5:
+        print("\033[93m[!] ADVERTENCIA: Entropía muy alta. Posible archivo cifrado o empaquetado.\033[0m")
+    
+    if strings:
+        print(f"Strings encontradas (primeras 5): {strings[:5]}")
+
     if is_mismatch:
         print("\033[91m[!] ALERTA: La extensión del archivo no coincide con el tipo detectado (Posible Spoofing)\033[0m")
     
@@ -47,9 +63,13 @@ def scan_file(filepath, report_list=None):
             "path": filepath,
             "signature": signature,
             "detected_type": file_type,
-            "extension_mismatch": is_mismatch
+            "extension_mismatch": is_mismatch,
+            "hashes": hashes,
+            "entropy": entropy,
+            "strings_preview": strings[:20] # Guardar un poco más en el reporte
         }
         report_list.append(report_entry)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Identifica tipos de archivos usando números mágicos y detecta spoofing.")
