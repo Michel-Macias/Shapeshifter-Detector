@@ -1,0 +1,174 @@
+{
+    "signatures": [
+        {
+            "hex": "89 50 4E 47 0D 0A 1A 0A",
+            "type": "Imagen PNG",
+            "extensions": [
+                ".png"
+            ]
+        },
+        {
+            "hex": "FF D8 FF",
+            "type": "Imagen JPEG",
+            "extensions": [
+                ".jpg",
+                ".jpeg",
+                ".jpe"
+            ]
+        },
+        {
+            "hex": "47 49 46 38 37 61",
+            "type": "Imagen GIF (87a)",
+            "extensions": [
+                ".gif"
+            ]
+        },
+        {
+            "hex": "47 49 46 38 39 61",
+            "type": "Imagen GIF (89a)",
+            "extensions": [
+                ".gif"
+            ]
+        },
+        {
+            "hex": "42 4D",
+            "type": "Imagen BMP",
+            "extensions": [
+                ".bmp"
+            ]
+        },
+        {
+            "hex": "25 50 44 46",
+            "type": "Documento PDF",
+            "extensions": [
+                ".pdf"
+            ]
+        },
+        {
+            "hex": "D0 CF 11 E0 A1 B1 1A E1",
+            "type": "Documento Microsoft Office (Legacy - OLE)",
+            "extensions": [
+                ".doc",
+                ".xls",
+                ".ppt",
+                ".msi",
+                ".msg"
+            ]
+        },
+        {
+            "hex": "50 4B 03 04",
+            "type": "Archivo ZIP / Office Open XML / JAR",
+            "extensions": [
+                ".zip",
+                ".docx",
+                ".xlsx",
+                ".pptx",
+                ".jar",
+                ".apk"
+            ]
+        },
+        {
+            "hex": "4D 5A",
+            "type": "Ejecutable de Windows (EXE/DLL)",
+            "extensions": [
+                ".exe",
+                ".dll",
+                ".sys",
+                ".scr"
+            ]
+        },
+        {
+            "hex": "7F 45 4C 46",
+            "type": "Ejecutable ELF (Linux)",
+            "extensions": [
+                "",
+                ".bin",
+                ".elf",
+                ".so"
+            ]
+        },
+        {
+            "hex": "23 21",
+            "type": "Script (Shebang)",
+            "extensions": [
+                ".sh",
+                ".py",
+                ".pl",
+                ".rb"
+            ]
+        },
+        {
+            "hex": "CA FE BA BE",
+            "type": "Java Class File",
+            "extensions": [
+                ".class"
+            ]
+        },
+        {
+            "hex": "1F 8B",
+            "type": "Archivo GZIP",
+            "extensions": [
+                ".gz",
+                ".tgz"
+            ]
+        },
+        {
+            "hex": "52 61 72 21 1A 07 00",
+            "type": "Archivo RAR",
+            "extensions": [
+                ".rar"
+            ]
+        },
+        {
+            "hex": "37 7A BC AF 27 1C",
+            "type": "Archivo 7z",
+            "extensions": [
+                ".7z"
+            ]
+        },
+        {
+            "hex": "49 44 33",
+            "type": "Audio MP3 (ID3v2)",
+            "extensions": [
+                ".mp3"
+            ]
+        },
+        {
+            "hex": "FF FB",
+            "type": "Audio MP3 (MPEG-1 Layer 3)",
+            "extensions": [
+                ".mp3"
+            ]
+        },
+        {
+            "hex": "00 00 00 18 66 74 79 70 6D 70 34 32",
+            "type": "Video MP4",
+            "extensions": [
+                ".mp4"
+            ]
+        },
+        {
+            "hex": "1A 45 DF A3",
+            "type": "Video Matroska (MKV/WebM)",
+            "extensions": [
+                ".mkv",
+                ".webm"
+            ]
+        },
+        {
+            "hex": "25 21 50 53",
+            "type": "PostScript",
+            "extensions": [
+                ".ps",
+                ".eps"
+            ]
+        },
+        {
+            "hex": "7B 5C 72 74 66 31",
+            "type": "Rich Text Format (RTF)",
+            "extensions": [
+                ".rtf"
+            ]
+        }
+    ]
+}
