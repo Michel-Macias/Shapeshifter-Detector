@@ -20,7 +20,16 @@ Esta herramienta ignora la extensión del nombre y mira directamente estos bytes
 ## 🚀 Funcionalidades
 - **Base de datos de firmas:** Reconoce formatos comunes (Imágenes, Documentos, Ejecutables, Archivos comprimidos).
 - **Escaneo inteligente:** Analiza archivos individuales o directorios completos recursivamente.
-- **Detección de anomalías:** Identifica cuando la extensión no coincide con el contenido real (Próximamente).
+- **Detección de anomalías:** Identifica cuando la extensión no coincide con el contenido real.
+
+## 🕵️ Modo Forense (Análisis de Malware)
+
+¡Transforma la herramienta en una navaja suiza para el análisis preliminar de malware!
+
+Nuevas Capacidades:
+-   **#️⃣ Hashes (MD5/SHA256):** Genera identificadores únicos del archivo para su rápida identificación y comparación con bases de datos de amenazas.
+-   **🎲 Entropía:** Calcula la entropía del archivo, un indicador clave para detectar si el contenido está "empaquetado" o cifrado, característica común en malware avanzado.
+-   **📝 Strings:** Extrae cadenas de texto legibles del binario, revelando posibles URLs, nombres de archivos, mensajes incrustados o funciones API que podrían indicar su comportamiento.
 
 ## 🛠️ Instalación y Uso
 
@@ -32,6 +41,31 @@ Ejecuta la herramienta desde la terminal pasando la ruta del archivo o carpeta q
 
 ```bash
 python3 main.py /ruta/al/archivo_o_carpeta
+```
+
+### Uso del Modo Forense
+
+Para activar el modo forense y obtener un análisis profundo de un archivo, usa el siguiente comando:
+
+```bash
+python3 main.py --forense /ruta/al/archivo_sospechoso
+```
+
+### Ejemplo de Salida (Modo Forense)
+
+```text
+Archivo: malware_sample.exe
+Firma: 4D 5A 90 00
+Tipo Detectado: Executable (Windows)
+
+--- Análisis Forense ---
+MD5: d41d8cd98f00b204e9800998ecf8427e
+SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+Entropía: 7.98 (Alto, posible empaquetado/cifrado)
+Strings (fragmento):
+  - "This program cannot be run in DOS mode."
+  - "kernel32.dll"
+  - "http://malicious.example.com/payload.bin"
 ```
 
 ### Ejemplo de Salida
