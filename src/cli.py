@@ -1,7 +1,14 @@
 import argparse
 import os
 import json
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.text import Text
+from rich.progress import track
 from src.core import get_file_signature, identify_type, calculate_hashes, calculate_entropy, extract_strings
+
+console = Console()
 
 def check_mismatch(filepath, detected_type_info):
     """
@@ -23,7 +30,7 @@ def check_mismatch(filepath, detected_type_info):
 
 def scan_file(filepath, report_list=None):
     """
-    Escanea un archivo individual, imprime el resultado y lo añade al reporte si se solicita.
+    Escanea un archivo individual y muestra los resultados usando Rich.
     """
     signature = get_file_signature(filepath)
     type_info = identify_type(signature)
@@ -36,26 +43,36 @@ def scan_file(filepath, report_list=None):
     file_type = type_info['type'] if type_info else "Desconocido"
     is_mismatch = check_mismatch(filepath, type_info)
     
-    # Salida por consola
-    print(f"Archivo: {filepath}")
-    print(f"Firma: {signature}")
-    print(f"Tipo Detectado: {file_type}")
+    # Crear tabla de resultados
+    table = Table(title=f"Análisis: {os.path.basename(filepath)}", show_header=False, box=None)
+    table.add_row("Ruta", filepath)
+    table.add_row("Firma Hex", signature)
+    
+    type_style = "bold green" if type_info else "bold yellow"
+    table.add_row("Tipo Detectado", Text(file_type, style=type_style))
     
     if hashes:
-        print(f"MD5: {hashes['md5']}")
-        print(f"SHA256: {hashes['sha256']}")
+        table.add_row("MD5", hashes['md5'])
+        table.add_row("SHA256", hashes['sha256'])
     
-    print(f"Entropía: {entropy:.2f}")
-    if entropy > 7.5:
-        print("\033[93m[!] ADVERTENCIA: Entropía muy alta. Posible archivo cifrado o empaquetado.\033[0m")
+    entropy_style = "bold red" if entropy > 7.5 else "green"
+    table.add_row("Entropía", Text(f"{entropy:.2f}", style=entropy_style))
     
     if strings:
-        print(f"Strings encontradas (primeras 5): {strings[:5]}")
+        strings_preview = ", ".join(strings[:5])
+        table.add_row("Strings (Preview)", Text(strings_preview, style="dim"))
 
-    if is_mismatch:
-        print("\033[91m[!] ALERTA: La extensión del archivo no coincide con el tipo detectado (Posible Spoofing)\033[0m")
+    # Mostrar tabla
+    console.print(Panel(table, title="[bold blue]Resultados del Escaneo[/bold blue]", border_style="blue"))
+
+    # Alertas
+    if entropy > 7.5:
+        console.print(Panel("[bold yellow]! ADVERTENCIA: Entropía muy alta (>7.5). Posible archivo cifrado o empaquetado.[/bold yellow]", border_style="yellow"))
     
-    print("-" * 40)
+    if is_mismatch:
+        console.print(Panel("[bold red]! ALERTA CRÍTICA: La extensión no coincide con el tipo real. Posible intento de Spoofing.[/bold red]", border_style="red"))
+    
+    console.print("-" * 40)
     
     # Añadir al reporte
     if report_list is not None:
@@ -66,7 +83,7 @@ def scan_file(filepath, report_list=None):
             "extension_mismatch": is_mismatch,
             "hashes": hashes,
             "entropy": entropy,
-            "strings_preview": strings[:20] # Guardar un poco más en el reporte
+            "strings_preview": strings[:20]
         }
         report_list.append(report_entry)
 
@@ -83,22 +100,28 @@ def main():
     if os.path.isfile(args.path):
         scan_file(args.path, report_data)
     elif os.path.isdir(args.path):
-        print(f"Escaneando directorio: {args.path}\n")
+        console.print(f"[bold]Escaneando directorio: {args.path}[/bold]\n")
+        files_to_scan = []
         for root, _, files in os.walk(args.path):
             for file in files:
-                filepath = os.path.join(root, file)
-                scan_file(filepath, report_data)
+                files_to_scan.append(os.path.join(root, file))
+        
+        # Barra de progreso para directorios
+        for filepath in track(files_to_scan, description="Procesando archivos..."):
+            scan_file(filepath, report_data)
+            
     else:
-        print(f"Error: La ruta '{args.path}' no existe.")
+        console.print(f"[bold red]Error: La ruta '{args.path}' no existe.[/bold red]")
 
     # Guardar reporte si se solicitó
     if args.output and report_data is not None:
         try:
             with open(args.output, 'w') as f:
                 json.dump(report_data, f, indent=4)
-            print(f"Reporte guardado exitosamente en: {args.output}")
+            console.print(f"[bold green]Reporte guardado exitosamente en: {args.output}[/bold green]")
         except Exception as e:
-            print(f"Error al guardar el reporte: {e}")
+            console.print(f"[bold red]Error al guardar el reporte: {e}[/bold red]")
 
 if __name__ == "__main__":
     main()
+
