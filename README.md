@@ -1,6 +1,6 @@
-# Identify-files
+# Identify-files 🛡️
 
-Una herramienta de ciberseguridad en Python para identificar tipos de archivos reales utilizando sus "números mágicos" (firmas de archivo).
+**Herramienta de Ciberseguridad de Alto Impacto** para la identificación de archivos mediante análisis de firmas binarias (Magic Numbers) y análisis forense.
 
 ## 🧐 El Problema: ¿Por qué necesitamos esto?
 
@@ -8,77 +8,69 @@ En el mundo digital, solemos confiar en las extensiones de archivo (como `.jpg`,
 
 Cualquiera puede renombrar un archivo malicioso `virus.exe` a `foto_vacaciones.jpg`. Si intentas abrirlo, el sistema operativo podría confundirse o, peor aún, un analista de seguridad podría pasarlo por alto si solo mira el nombre.
 
-### ¿Qué son los Números Mágicos?
-Los archivos tienen una "huella digital" interna: los primeros bytes de su contenido binario. Estos bytes son únicos para cada formato y se conocen como **Números Mágicos** o *File Signatures*.
+Esta herramienta ignora la extensión del nombre y mira directamente los **Números Mágicos** (los primeros bytes del archivo) para decirte qué es realmente.
 
-Por ejemplo:
-- Un archivo **PNG** siempre empieza con: `89 50 4E 47`
-- Un **PDF** siempre empieza con: `25 50 44 46`
+## 🚀 Funcionalidades Clave
 
-Esta herramienta ignora la extensión del nombre y mira directamente estos bytes para decirte qué es realmente el archivo.
+### 🛡️ Seguridad Defensiva
+*   **Detección de Spoofing:** Alerta roja inmediata si la extensión del archivo no coincide con su firma real (ej. un `.pdf` que es realmente un `.exe`).
+*   **Base de Datos Externa:** Soporte para cientos de formatos, incluyendo vectores de ataque críticos como scripts de PowerShell, instaladores MSI y documentos con macros.
 
-## 🚀 Funcionalidades
-- **Base de datos de firmas:** Reconoce formatos comunes (Imágenes, Documentos, Ejecutables, Archivos comprimidos).
-- **Escaneo inteligente:** Analiza archivos individuales o directorios completos recursivamente.
-- **Detección de anomalías:** Identifica cuando la extensión no coincide con el contenido real.
+### 🕵️ Análisis Forense Avanzado
+*   **IOCs Automáticos:** Calcula hashes **MD5** y **SHA256** para cada archivo, listos para buscar en VirusTotal.
+*   **Análisis de Entropía:** Detecta archivos **empaquetados (packed)** o cifrados midiendo la aleatoriedad de sus bytes.
+*   **Extracción de Strings:** Muestra cadenas de texto legibles ocultas en el binario (URLs, IPs, mensajes).
 
-## 🕵️ Modo Forense (Análisis de Malware)
+### 🎨 Experiencia de Usuario (UX/UI)
+*   **CLI Profesional:** Interfaz de terminal estilo "hacker" con tablas, colores y barras de progreso (gracias a `rich`).
+*   **Dashboard Web:** Panel de control gráfico con `Streamlit` para visualizar reportes, métricas y gráficos de distribución.
+*   **Reportes JSON:** Exporta los resultados para integrarlos con otras herramientas SIEM o de análisis.
 
-¡Transforma la herramienta en una navaja suiza para el análisis preliminar de malware!
+## 🛠️ Instalación
 
-Nuevas Capacidades:
--   **#️⃣ Hashes (MD5/SHA256):** Genera identificadores únicos del archivo para su rápida identificación y comparación con bases de datos de amenazas.
--   **🎲 Entropía:** Calcula la entropía del archivo, un indicador clave para detectar si el contenido está "empaquetado" o cifrado, característica común en malware avanzado.
--   **📝 Strings:** Extrae cadenas de texto legibles del binario, revelando posibles URLs, nombres de archivos, mensajes incrustados o funciones API que podrían indicar su comportamiento.
+1.  Clona el repositorio:
+    ```bash
+    git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
+    cd Shapeshifter-Detector
+    ```
 
-## 🛠️ Instalación y Uso
+2.  Instala las dependencias:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-### Requisitos
-- Python 3.x
+## 💻 Uso
 
-### Uso Básico
-Ejecuta la herramienta desde la terminal pasando la ruta del archivo o carpeta que quieres analizar:
+### 1. Escaneo en Terminal (CLI)
+Escanea un archivo o un directorio completo. La herramienta detectará automáticamente el tipo, calculará hashes y buscará anomalías.
 
 ```bash
+# Escaneo básico
 python3 main.py /ruta/al/archivo_o_carpeta
+
+# Escaneo generando un reporte JSON
+python3 main.py . --output reporte_seguridad.json
 ```
 
-### Uso del Modo Forense
+### 2. Dashboard Web
+Visualiza los resultados de forma gráfica e interactiva.
 
-Para activar el modo forense y obtener un análisis profundo de un archivo, usa el siguiente comando:
-
-```bash
-python3 main.py --forense /ruta/al/archivo_sospechoso
-```
-
-### Ejemplo de Salida (Modo Forense)
-
-```text
-Archivo: malware_sample.exe
-Firma: 4D 5A 90 00
-Tipo Detectado: Executable (Windows)
-
---- Análisis Forense ---
-MD5: d41d8cd98f00b204e9800998ecf8427e
-SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-Entropía: 7.98 (Alto, posible empaquetado/cifrado)
-Strings (fragmento):
-  - "This program cannot be run in DOS mode."
-  - "kernel32.dll"
-  - "http://malicious.example.com/payload.bin"
-```
-
-### Ejemplo de Salida
-```text
-Archivo: documento_sospechoso.jpg
-Firma: 25 50 44 46
-Tipo Detectado: PDF Document
-```
-*¡Alerta! Un archivo con extensión .jpg que en realidad es un PDF.*
+1.  Genera primero un reporte JSON (ver comando anterior).
+2.  Inicia el dashboard:
+    ```bash
+    streamlit run dashboard.py
+    ```
+3.  Sube el archivo `reporte_seguridad.json` en la interfaz web que se abrirá en tu navegador.
 
 ## 📂 Estructura del Proyecto
-- `src/`: Código fuente de la herramienta.
-  - `core.py`: Lógica principal de lectura e identificación.
-  - `signatures.py`: Base de datos de firmas hexadecimales.
-  - `cli.py`: Interfaz de línea de comandos.
-- `tests/`: Pruebas unitarias para asegurar que todo funciona correctamente.
+
+*   `src/`: Código fuente.
+    *   `core.py`: Motor de análisis forense y detección.
+    *   `cli.py`: Interfaz de línea de comandos profesional.
+    *   `signatures.json`: Base de datos de firmas (fácilmente editable).
+*   `dashboard.py`: Aplicación web para visualización de datos.
+*   `tests/`: Suite de pruebas unitarias.
+*   `main.py`: Punto de entrada de la aplicación.
+
+---
+Desarrollado con fines educativos y profesionales para el análisis de malware y defensa de redes.
