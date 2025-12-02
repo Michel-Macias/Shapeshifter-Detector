@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# Streamlit
+.streamlit/
+
+# Project specific
+reporte_*.json
+reporte.json
+temp_test_file.txt
+fake_doc.pdf
+test_image.png
+test_doc.pdf
+test_unknown.xyz
+*.log
+
+# IDEs
+.vscode/
+.idea/

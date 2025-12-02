@@ -1,76 +1,97 @@
-# Identify-files 🛡️
+# 🛡️ Identify-Files: Detector de Amenazas por Firma Digital
 
-**Herramienta de Ciberseguridad de Alto Impacto** para la identificación de archivos mediante análisis de firmas binarias (Magic Numbers) y análisis forense.
+**Proyecto de Ciberseguridad de Alto Impacto** 
 
-## 🧐 El Problema: ¿Por qué necesitamos esto?
+## 💡 El Problema: La Mentira de las Extensiones
+En el panorama actual de ciberseguridad, confiar en las extensiones de archivo es un error fatal. Los atacantes utilizan técnicas de **Extension Spoofing** (ej. renombrar `malware.exe` a `factura.pdf`) para evadir controles básicos y engañar a usuarios y analistas.
 
-En el mundo digital, solemos confiar en las extensiones de archivo (como `.jpg`, `.pdf`, `.exe`) para saber qué tipo de contenido estamos manejando. Sin embargo, **las extensiones mienten**.
+Las herramientas tradicionales o la inspección visual simple no son suficientes para detectar estas amenazas ocultas a simple vista.
 
-Cualquiera puede renombrar un archivo malicioso `virus.exe` a `foto_vacaciones.jpg`. Si intentas abrirlo, el sistema operativo podría confundirse o, peor aún, un analista de seguridad podría pasarlo por alto si solo mira el nombre.
+## 🚀 La Solución: Identify-Files
+**Identify-Files** es una herramienta de defensa activa y análisis forense diseñada para revelar la verdadera identidad de cualquier archivo. Utiliza **Magic Numbers** (firmas binarias) para ignorar la extensión declarada y analizar el contenido real del archivo.
 
-Esta herramienta ignora la extensión del nombre y mira directamente los **Números Mágicos** (los primeros bytes del archivo) para decirte qué es realmente.
+Más que un simple identificador, es una suite forense que alerta sobre discrepancias, calcula indicadores de compromiso (IOCs) y detecta técnicas de ofuscación como el "packing".
 
-## 🚀 Funcionalidades Clave
+## ✨ Características y Beneficios Clave
+- 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
+- 🕵️ **Análisis Forense Profundo:** Cálculo automático de hashes (MD5, SHA256) y análisis de entropía para detectar cifrado/packing.
+- 📝 **Inteligencia de Strings:** Extracción de cadenas legibles para hallar URLs de C2 o mensajes ocultos.
+- 🎨 **Experiencia Profesional:**
+    - **CLI Hacker-Style:** Interfaz de terminal con tablas y colores (Rich).
+    - **Dashboard Web:** Panel gráfico interactivo (Streamlit) para reportes ejecutivos.
+- 💾 **Base de Datos Extensible:** Firmas gestionadas en JSON externo, soportando cientos de formatos y vectores de ataque.
 
-### 🛡️ Seguridad Defensiva
-*   **Detección de Spoofing:** Alerta roja inmediata si la extensión del archivo no coincide con su firma real (ej. un `.pdf` que es realmente un `.exe`).
-*   **Base de Datos Externa:** Soporte para cientos de formatos, incluyendo vectores de ataque críticos como scripts de PowerShell, instaladores MSI y documentos con macros.
+## 🚀 Primeros Pasos
 
-### 🕵️ Análisis Forense Avanzado
-*   **IOCs Automáticos:** Calcula hashes **MD5** y **SHA256** para cada archivo, listos para buscar en VirusTotal.
-*   **Análisis de Entropía:** Detecta archivos **empaquetados (packed)** o cifrados midiendo la aleatoriedad de sus bytes.
-*   **Extracción de Strings:** Muestra cadenas de texto legibles ocultas en el binario (URLs, IPs, mensajes).
-
-### 🎨 Experiencia de Usuario (UX/UI)
-*   **CLI Profesional:** Interfaz de terminal estilo "hacker" con tablas, colores y barras de progreso (gracias a `rich`).
-*   **Dashboard Web:** Panel de control gráfico con `Streamlit` para visualizar reportes, métricas y gráficos de distribución.
-*   **Reportes JSON:** Exporta los resultados para integrarlos con otras herramientas SIEM o de análisis.
-
-## 🛠️ Instalación
-
-1.  Clona el repositorio:
-    ```bash
-    git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
-    cd Shapeshifter-Detector
-    ```
-
-2.  Instala las dependencias:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## 💻 Uso
-
-### 1. Escaneo en Terminal (CLI)
-Escanea un archivo o un directorio completo. La herramienta detectará automáticamente el tipo, calculará hashes y buscará anomalías.
-
+### 1. Clonar el repositorio
 ```bash
-# Escaneo básico
-python3 main.py /ruta/al/archivo_o_carpeta
-
-# Escaneo generando un reporte JSON
-python3 main.py . --output reporte_seguridad.json
+git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
+cd Shapeshifter-Detector
 ```
 
-### 2. Dashboard Web
-Visualiza los resultados de forma gráfica e interactiva.
+### 2. Instalar dependencias
+Se recomienda usar un entorno virtual.
+```bash
+pip install -r requirements.txt
+```
 
-1.  Genera primero un reporte JSON (ver comando anterior).
-2.  Inicia el dashboard:
-    ```bash
-    streamlit run dashboard.py
-    ```
-3.  Sube el archivo `reporte_seguridad.json` en la interfaz web que se abrirá en tu navegador.
+## 🎯 Uso Detallado
 
-## 📂 Estructura del Proyecto
+### Modo Terminal (CLI)
+Ideal para análisis rápido o integración en scripts.
 
-*   `src/`: Código fuente.
-    *   `core.py`: Motor de análisis forense y detección.
-    *   `cli.py`: Interfaz de línea de comandos profesional.
-    *   `signatures.json`: Base de datos de firmas (fácilmente editable).
-*   `dashboard.py`: Aplicación web para visualización de datos.
-*   `tests/`: Suite de pruebas unitarias.
-*   `main.py`: Punto de entrada de la aplicación.
+```bash
+# Escaneo de un solo archivo
+python3 main.py archivo_sospechoso.exe
+
+# Escaneo masivo de directorio con reporte JSON
+python3 main.py /ruta/descargas --output reporte_forense.json
+```
+
+### Modo Gráfico (Dashboard)
+Ideal para visualizar hallazgos y presentar reportes.
+
+```bash
+streamlit run dashboard.py
+```
+*Sube el archivo `reporte_forense.json` generado anteriormente para ver las métricas.*
+
+## 📁 Estructura del Proyecto
+```
+Identify-Files/
+├── README.md           # Este archivo
+├── .gitignore          # Archivos ignorados
+├── requirements.txt    # Dependencias del proyecto
+├── main.py             # Punto de entrada CLI
+├── dashboard.py        # Interfaz web (Streamlit)
+├── src/                # Código fuente principal
+│   ├── core.py         # Motor de análisis y lógica forense
+│   ├── cli.py          # Interfaz de terminal (Rich)
+│   └── signatures.json # Base de datos de firmas
+└── tests/              # Tests unitarios
+```
+
+## 🛠️ Tecnologías Utilizadas
+- **[Python 3.x](https://www.python.org/):** Lenguaje base.
+- **[Rich](https://github.com/Textualize/rich):** Para una CLI moderna y visual.
+- **[Streamlit](https://streamlit.io/):** Para el dashboard de análisis de datos.
+- **[Pandas](https://pandas.pydata.org/):** Procesamiento de datos de reportes.
+- **[Hashlib & Math](https://docs.python.org/3/library/):** Cálculos criptográficos y matemáticos.
+
+## 🔐 Seguridad
+- Esta herramienta es de **solo lectura**: no modifica los archivos analizados.
+- Se recomienda ejecutarla en un entorno aislado (Sandbox) al analizar malware real.
+
+## 🧪 Testing
+El proyecto cuenta con una suite de pruebas unitarias para asegurar la fiabilidad de la detección.
+
+```bash
+python3 -m unittest discover tests
+```
+
+## 👤 Autor
+**Michel Macias**
+- GitHub: [@MaciasIT](https://github.com/MaciasIT)
 
 ---
-Desarrollado con fines educativos y profesionales para el análisis de malware y defensa de redes.
+*Desarrollado como parte del portafolio de ciberseguridad avanzada.*
