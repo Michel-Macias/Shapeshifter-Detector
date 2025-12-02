@@ -4,31 +4,31 @@ from src.core import get_file_signature, identify_type
 
 def scan_file(filepath):
     """
-    Scans a single file and prints the result.
+    Escanea un archivo individual e imprime el resultado.
     """
     signature = get_file_signature(filepath)
     file_type = identify_type(signature)
-    print(f"File: {filepath}")
-    print(f"Signature: {signature}")
-    print(f"Type: {file_type}")
+    print(f"Archivo: {filepath}")
+    print(f"Firma: {signature}")
+    print(f"Tipo Detectado: {file_type}")
     print("-" * 40)
 
 def main():
-    parser = argparse.ArgumentParser(description="Identify file types using magic numbers.")
-    parser.add_argument("path", help="Path to file or directory to scan")
+    parser = argparse.ArgumentParser(description="Identifica tipos de archivos usando números mágicos.")
+    parser.add_argument("path", help="Ruta al archivo o directorio a escanear")
     
     args = parser.parse_args()
     
     if os.path.isfile(args.path):
         scan_file(args.path)
     elif os.path.isdir(args.path):
-        print(f"Scanning directory: {args.path}\n")
+        print(f"Escaneando directorio: {args.path}\n")
         for root, _, files in os.walk(args.path):
             for file in files:
                 filepath = os.path.join(root, file)
                 scan_file(filepath)
     else:
-        print(f"Error: Path '{args.path}' not found.")
+        print(f"Error: La ruta '{args.path}' no existe.")
 
 if __name__ == "__main__":
     main()

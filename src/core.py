@@ -3,34 +3,34 @@ from src.signatures import SIGNATURES
 
 def get_file_signature(filepath, num_bytes=16):
     """
-    Reads the first N bytes of a file and returns them as a hex string.
+    Lee los primeros N bytes de un archivo y los devuelve como una cadena hexadecimal.
     """
     try:
         with open(filepath, 'rb') as f:
             chunk = f.read(num_bytes)
-            # Convert bytes to hex string (e.g., b'\x89PNG' -> '89 50 4E 47')
+            # Convertir bytes a cadena hex (ej: b'\x89PNG' -> '89 50 4E 47')
             hex_str = binascii.hexlify(chunk).decode('utf-8').upper()
-            # Format with spaces for readability and matching
+            # Formatear con espacios para legibilidad y coincidencia
             formatted_hex = ' '.join(hex_str[i:i+2] for i in range(0, len(hex_str), 2))
             return formatted_hex
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f"Error reading file {filepath}: {e}")
+        print(f"Error leyendo el archivo {filepath}: {e}")
         return None
 
 def identify_type(hex_signature):
     """
-    Matches the hex signature against the database.
-    Returns the file type or 'Unknown'.
+    Compara la firma hexadecimal con la base de datos.
+    Devuelve el tipo de archivo o 'Desconocido'.
     """
     if not hex_signature:
-        return "Error: Could not read file signature"
+        return "Error: No se pudo leer la firma del archivo"
 
-    # Iterate through signatures to find a match
-    # We check if the file's signature STARTS with the known signature
+    # Iterar a través de las firmas para encontrar una coincidencia
+    # Verificamos si la firma del archivo COMIENZA con la firma conocida
     for signature, file_type in SIGNATURES.items():
         if hex_signature.startswith(signature):
             return file_type
             
-    return "Unknown File Type"
+    return "Tipo de Archivo Desconocido"
