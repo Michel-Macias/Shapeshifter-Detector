@@ -12,6 +12,13 @@ Las herramientas tradicionales o la inspección visual simple no son suficientes
 
 Más que un simple identificador, es una suite forense que alerta sobre discrepancias, calcula indicadores de compromiso (IOCs) y detecta técnicas de ofuscación como el "packing".
 
+## 🎥 Video de Demostración
+Mira la herramienta en acción:
+
+https://github.com/user-attachments/assets/identify_files.webm
+
+*El video muestra el análisis forense completo: detección de tipos, cálculo de hashes, análisis de entropía y visualización en el dashboard.*
+
 ## ✨ Características y Beneficios Clave
 - 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
 - 🕵️ **Análisis Forense Profundo:** Cálculo automático de hashes (MD5, SHA256) y análisis de entropía para detectar cifrado/packing.
