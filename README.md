@@ -15,9 +15,9 @@ Más que un simple identificador, es una suite forense que alerta sobre discrepa
 ## 🎥 Video de Demostración
 Mira la herramienta en acción:
 
-https://github.com/user-attachments/assets/identify_files.webm
+[![Video de Demostración](https://img.youtube.com/vi/By_SXV3f808/maxresdefault.jpg)](https://youtu.be/By_SXV3f808?si=FdgXz23D_SfSd8dD)
 
-*El video muestra el análisis forense completo: detección de tipos, cálculo de hashes, análisis de entropía y visualización en el dashboard.*
+*Haz clic en la imagen para ver el análisis forense completo: detección de tipos, cálculo de hashes, análisis de entropía y visualización en el dashboard.*
 
 ## ✨ Características y Beneficios Clave
 - 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
