@@ -133,9 +133,15 @@ def main():
     # Guardar reporte si se solicitó
     if args.output and report_data is not None:
         try:
-            with open(args.output, 'w') as f:
+            # Si no es ruta absoluta, guardarlo en reports/
+            output_path = args.output
+            if not os.path.isabs(output_path):
+                os.makedirs('reports', exist_ok=True)
+                output_path = os.path.join('reports', args.output)
+            
+            with open(output_path, 'w') as f:
                 json.dump(report_data, f, indent=4)
-            logger.info(f"Reporte guardado exitosamente en: [bold green]{args.output}[/bold green]")
+            logger.info(f"Reporte guardado exitosamente en: [bold green]{output_path}[/bold green]")
         except Exception as e:
             logger.error(f"Error al guardar el reporte: {e}")
 

@@ -1,0 +1,149 @@
+[
+    {
+        "path": "/home/m1txel/.ssh/id_github_maciasIT",
+        "signature": "2D 2D 2D 2D 2D 42 45 47 49 4E 20 4F 50 45 4E 53 53 48 20 50 52 49 56 41 54 45 20 4B 45 59 2D 2D",
+        "detected_type": "Certificado / Clave PEM",
+        "extension_mismatch": true,
+        "hashes": {
+            "md5": "d3fbbefd3dd053b384b1981ba50ef14c",
+            "sha256": "ab66523817f25df9e76a398d7a76a877f6ec677fc65e5e19a35d1e350add9e7c"
+        },
+        "entropy": 5.643509357098701,
+        "strings_preview": [
+            "-----BEGIN OPENSSH PRIVATE KEY-----",
+            "b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW",
+            "QyNTUxOQAAACCUooK3ZgTlCyOz4s6qTtm0Y3d18y+IqH41Bnele+gNXwAAAKCaQT9KmkE/",
+            "SgAAAAtzc2gtZWQyNTUxOQAAACCUooK3ZgTlCyOz4s6qTtm0Y3d18y+IqH41Bnele+gNXw",
+            "AAAEAiLilOh/U4yjdallZjRVMhYg1xu6OJxYMFGQSe8GL4KpSigrdmBOULI7PizqpO2bRj",
+            "d3XzL4iofjUGd6V76A1fAAAAGW1pY2hlbG1hY2lhcy5pdEBnbWFpbC5jb20BAgME",
+            "-----END OPENSSH PRIVATE KEY-----"
+        ],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/id_github_Michel_Macias.pub",
+        "signature": "73 73 68 2D 65 64 32 35 35 31 39 20 41 41 41 41 43 33 4E 7A 61 43 31 6C 5A 44 49 31 4E 54 45 35",
+        "detected_type": "Desconocido",
+        "extension_mismatch": false,
+        "hashes": {
+            "md5": "b60a66fbed1fedc79a4eb5f3bbd8772b",
+            "sha256": "41872f992ed0d7c9a7b4dbd9906ae70d9fbd9c8e3d7b72b71fb666a80ff1990c"
+        },
+        "entropy": 5.3229278861700795,
+        "strings_preview": [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZeylL/5PdGm8DBxU/IPyIsWjceQeNFluG+krP3rZ5Q mamcom2010@gmail.com"
+        ],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/id_github_Michel_Macias",
+        "signature": "2D 2D 2D 2D 2D 42 45 47 49 4E 20 4F 50 45 4E 53 53 48 20 50 52 49 56 41 54 45 20 4B 45 59 2D 2D",
+        "detected_type": "Certificado / Clave PEM",
+        "extension_mismatch": true,
+        "hashes": {
+            "md5": "2b22d68ae31953575f6c1964391d71f4",
+            "sha256": "5f9d26ecf4f3dc0ca44b8b9da6f7a52ea2cde8cee29d21f433b49eb0648324f5"
+        },
+        "entropy": 5.646237659259524,
+        "strings_preview": [
+            "-----BEGIN OPENSSH PRIVATE KEY-----",
+            "b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW",
+            "QyNTUxOQAAACDGXspS/+T3RpvAwcVPyD8iLFo3HkHjRZbhvpKz962eUAAAAJj3B4dC9weH",
+            "QgAAAAtzc2gtZWQyNTUxOQAAACDGXspS/+T3RpvAwcVPyD8iLFo3HkHjRZbhvpKz962eUA",
+            "AAAEDrdPJuxzlo7IMcMA3fedxqqkNG/Lb6W4Gua0Bdqz0abcZeylL/5PdGm8DBxU/IPyIs",
+            "WjceQeNFluG+krP3rZ5QAAAAFG1hbWNvbTIwMTBAZ21haWwuY29tAQ==",
+            "-----END OPENSSH PRIVATE KEY-----"
+        ],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/known_hosts.old",
+        "signature": "7C 31 7C 62 69 4A 4C 50 64 31 64 44 6D 45 68 66 53 66 69 5A 38 79 6B 47 62 58 50 4E 33 45 3D 7C",
+        "detected_type": "Desconocido",
+        "extension_mismatch": false,
+        "hashes": {
+            "md5": "be060c01d36a6b13c90e8fa13e1adb8a",
+            "sha256": "71332ba72f1ecc59a0250ff0683ecbfa90bd292ba5e6f3490372468ae3d56ec8"
+        },
+        "entropy": 6.00008987357559,
+        "strings_preview": [
+            "|1|biJLPd1dDmEhfSfiZ8ykGbXPN3E=|es1tLMZopJD8hyJS8io5MkZ6of8= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ9h+fYljR5pSH8SXSZ8IpO+TuFGYqwcCDoTV6/CsiJ5",
+            "|1|9b+qNHh6vaWFhVeNI5D9dkm9lbM=|OB9CFQVcAVS/MthadjD2NpKEnHs= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDLwkhmfm5yAoMuGi/lTERqJXt46T0U4EcZ2Q1f9lWonERfpTw/SD10W6Ff2FOYwQsh0YLClJcse+AzT1IQfUnHwaC6fMu0zzQ7a2vW5rZjOWnk0n4jCKCkILJdFZfPqvV36d6vqAvGQNKJ3WQ2KPMcOWy07kcRZIDxdCPZ2HEOWBO7/OcyKbI+RvuSK9JDWCyvZi8xZJxaofC4O6i9B5qFzcB1FYN7M/ozGymDV6DUfqAHPjnef69UvFOW2aj7umrlBuxpjaPPLNYCd1F1NxtVvuoklpdadst0XxHxZ4G4cTYAeDtUS3aVNulj/YXPJmeLacCMwMqO9n4RqshxgJgEQbhakn+B1QlUexpZOvOC5Cvb1KfJcbCh0jC4yCr/e6eNDG96yqPlcFRFBMBx2GRocqKhIWvkn1QgJ89dlUM5P1sH0RI/tybEdhveogNWuv5v1m0rwt0hDr33TMKtiWR4wZ8YPEQOOqn1UxLxmFa5IFsrexxebQcp8lkrN9i0y28=",
+            "|1|C1dSQKxyDXkbfA84tn0VhSbVaXE=|xhqyN7vwIE8sIYDDbKJ4WXaWkoc= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOVq3iWwOrOJfVNhojX+Gp7kkpRa9BNKT/Hj0+lhs9/bmi1VbAlSXpb8Szc6j1jFVY7TonMZ1LloXp8e+AKjyFs=",
+            "|1|1kwqjza6MYJkt6jNfo/di0pNirA=|OCjdoFkMz2/mZ6qkyVsQ+coanCE= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
+        ],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/known_hosts",
+        "signature": "7C 31 7C 62 69 4A 4C 50 64 31 64 44 6D 45 68 66 53 66 69 5A 38 79 6B 47 62 58 50 4E 33 45 3D 7C",
+        "detected_type": "Desconocido",
+        "extension_mismatch": false,
+        "hashes": {
+            "md5": "98d20af5adb5e49b78153a739761e5ac",
+            "sha256": "c3b2ba20d6f98abd859f74570c6adf2df2770648ccdfdb26c0211d7df186442e"
+        },
+        "entropy": 6.0186817294255395,
+        "strings_preview": [
+            "|1|biJLPd1dDmEhfSfiZ8ykGbXPN3E=|es1tLMZopJD8hyJS8io5MkZ6of8= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ9h+fYljR5pSH8SXSZ8IpO+TuFGYqwcCDoTV6/CsiJ5",
+            "|1|9b+qNHh6vaWFhVeNI5D9dkm9lbM=|OB9CFQVcAVS/MthadjD2NpKEnHs= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDLwkhmfm5yAoMuGi/lTERqJXt46T0U4EcZ2Q1f9lWonERfpTw/SD10W6Ff2FOYwQsh0YLClJcse+AzT1IQfUnHwaC6fMu0zzQ7a2vW5rZjOWnk0n4jCKCkILJdFZfPqvV36d6vqAvGQNKJ3WQ2KPMcOWy07kcRZIDxdCPZ2HEOWBO7/OcyKbI+RvuSK9JDWCyvZi8xZJxaofC4O6i9B5qFzcB1FYN7M/ozGymDV6DUfqAHPjnef69UvFOW2aj7umrlBuxpjaPPLNYCd1F1NxtVvuoklpdadst0XxHxZ4G4cTYAeDtUS3aVNulj/YXPJmeLacCMwMqO9n4RqshxgJgEQbhakn+B1QlUexpZOvOC5Cvb1KfJcbCh0jC4yCr/e6eNDG96yqPlcFRFBMBx2GRocqKhIWvkn1QgJ89dlUM5P1sH0RI/tybEdhveogNWuv5v1m0rwt0hDr33TMKtiWR4wZ8YPEQOOqn1UxLxmFa5IFsrexxebQcp8lkrN9i0y28=",
+            "|1|C1dSQKxyDXkbfA84tn0VhSbVaXE=|xhqyN7vwIE8sIYDDbKJ4WXaWkoc= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOVq3iWwOrOJfVNhojX+Gp7kkpRa9BNKT/Hj0+lhs9/bmi1VbAlSXpb8Szc6j1jFVY7TonMZ1LloXp8e+AKjyFs=",
+            "|1|1kwqjza6MYJkt6jNfo/di0pNirA=|OCjdoFkMz2/mZ6qkyVsQ+coanCE= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl",
+            "|1|/6V3IP6TeTVp9GSaBcfuucjOp5w=|nEWGbSRDmio0yUrjAP2FvU0/tdw= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=",
+            "|1|xAKw4c+mdmL7IWJtBySV17Zfcd4=|asGSOtHwa85qdvjH7oI+ApRKw3U= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
+        ],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/authorized_keys",
+        "signature": "",
+        "detected_type": "Desconocido",
+        "extension_mismatch": false,
+        "hashes": {
+            "md5": "d41d8cd98f00b204e9800998ecf8427e",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "entropy": 0.0,
+        "strings_preview": [],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/config",
+        "signature": "23 20 43 75 65 6E 74 61 20 50 65 72 73 6F 6E 61 6C 20 28 70 6F 72 20 64 65 66 65 63 74 6F 29 0A",
+        "detected_type": "Desconocido",
+        "extension_mismatch": false,
+        "hashes": {
+            "md5": "e762a7a830a614bd1fec2121725230f5",
+            "sha256": "064f3b8070b9b05e8f7367256a3c83b1714778a99fb6319fa779dbed78607f90"
+        },
+        "entropy": 4.812129566650973,
+        "strings_preview": [
+            "# Cuenta Personal (por defecto)",
+            "Host github-Michel_Macias",
+            "  HostName github.com",
+            "  User git",
+            "  IdentityFile ~/.ssh/id_github_Michel_Macias.pub",
+            "# Otra Cuenta (ej. Trabajo o Secundaria)",
+            "Host github-MaciasIT",
+            "  HostName github.com",
+            "  User git",
+            "  IdentityFile ~/.ssh/id_github_maciasIT.pub"
+        ],
+        "vulnerabilities": []
+    },
+    {
+        "path": "/home/m1txel/.ssh/id_github_maciasIT.pub",
+        "signature": "73 73 68 2D 65 64 32 35 35 31 39 20 41 41 41 41 43 33 4E 7A 61 43 31 6C 5A 44 49 31 4E 54 45 35",
+        "detected_type": "Desconocido",
+        "extension_mismatch": false,
+        "hashes": {
+            "md5": "1673d53219a8815121dd62cc8a1e54e6",
+            "sha256": "140cd105e3973b45cd4fd5c15a8d2de702b26d56dff93e34b0dcb28b5a837a71"
+        },
+        "entropy": 5.373992454113279,
+        "strings_preview": [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSigrdmBOULI7PizqpO2bRjd3XzL4iofjUGd6V76A1f michelmacias.it@gmail.com"
+        ],
+        "vulnerabilities": []
+    }
+]

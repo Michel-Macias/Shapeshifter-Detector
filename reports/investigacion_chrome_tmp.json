@@ -1,0 +1,36 @@
+[
+    {
+        "path": "/tmp/.com.google.Chrome.99x0lQ",
+        "signature": "89 50 4E 47 0D 0A 1A 0A 00 00 00 0D 49 48 44 52 00 00 01 00 00 00 01 00 08 06 00 00 00 5C 72 A8",
+        "detected_type": "Imagen PNG",
+        "extension_mismatch": true,
+        "hashes": {
+            "md5": "ab7cc9a2c1d1c2e9d1db2d0a9c75cb59",
+            "sha256": "ba9cff0aac7a9fc53dbbf1074dd367154b81f188851488a9c87ebaff9ea15a17"
+        },
+        "entropy": 7.986237754556096,
+        "strings_preview": [
+            "IHDR",
+            "IDATx",
+            "frr!H",
+            "QY]j",
+            "Elux5",
+            "/2\\1l",
+            "._3~",
+            "$^Vs",
+            "g_=F",
+            "t:4|\\",
+            "n1Rx",
+            "f]U3R",
+            "0P!I",
+            ";}xa",
+            "BN@Y",
+            "4VD;O",
+            "(EEI?",
+            "7RVJ",
+            "zN|ma",
+            "cs]\\"
+        ],
+        "vulnerabilities": []
+    }
+]
