@@ -139,7 +139,14 @@ def analyze_vulnerabilities(filepath):
     """
     Realiza un análisis estático del archivo buscando patrones de vulnerabilidades
     o indicadores de compromiso (IoC) comunes.
+    
+    Excluye archivos de definición de tipos (.pyi) para reducir falsos positivos.
     """
+    
+    # Excluir archivos de definición de tipos de Python
+    if filepath.endswith('.pyi'):
+        return []
+    
     findings = []
     
     # Patrones de riesgo comunes (Regex)
