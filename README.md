@@ -29,9 +29,12 @@ Mira la herramienta en acción:
 ## ✨ Características y Beneficios Clave
 - 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
 - 🕵️ **Análisis Forense Escalable:** Procesamiento por bloques (Chunking) para archivos de gran tamaño.
-- 🔍 **Motor de Vulnerabilidades (SAST):** Análisis estático en busca de IoCs, backdoors, inyecciones de código (eval/os.system) y secretos hardcodeados.
+- 🔍 **Motor de Vulnerabilidades (SAST):** Análisis estático en busca de IoCs, backdoors, inyecciones de código (eval/os.system) y secretos hardcodeados. Con filtrado inteligente de falsos positivos.
 - 📊 **Métricas Avanzadas:** Cálculo de hashes (MD5, SHA256) y entropía de Shannon.
 - 📝 **Inteligencia de Strings:** Extracción incremental de cadenas legibles (URLs, IPs, metadatos).
+- ⚡ **Motor Optimizado:** Búsqueda de firmas O(1) con caché indexada para escaneos ultrarrápidos.
+- 📁 **Gestión de Reportes:** Sistema automático de organización en carpeta `reports/` con scripts de consolidación.
+- 🤖 **DevSecOps Integrado:** GitHub Actions con auto-auditoría de seguridad en cada commit.
 - 🎨 **Experiencia Profesional:**
     - **CLI Hacker-Style:** Interfaz enriquecida con `Rich`, barras de progreso y logging profesional.
     - **Dashboard Web:** Panel gráfico interactivo (Streamlit) para análisis masivo.
