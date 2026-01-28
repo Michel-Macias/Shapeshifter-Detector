@@ -1,16 +1,22 @@
 # 🛡️ Identify-Files: Detector de Amenazas por Firma Digital
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TDD Certified](https://img.shields.io/badge/Methodology-TDD-green.svg)](https://en.wikipedia.org/wiki/Test-driven_development)
+[![Security Scan](https://img.shields.io/badge/Security-SAST%20Enabled-red.svg)](#)
 
-**Proyecto de Ciberseguridad de Alto Impacto** 
+**Identify-Files** (nombre en GitHub: *Shapeshifter-Detector*) es una herramienta de defensa activa y análisis forense diseñada para revelar la verdadera identidad de cualquier archivo. Ignora la extensión declarada y analiza el **contenido binario real** (Magic Numbers).
 
-## 💡 El Problema: La Mentira de las Extensiones
-En el panorama actual de ciberseguridad, confiar en las extensiones de archivo es un error fatal. Los atacantes utilizan técnicas de **Extension Spoofing** (ej. renombrar `malware.exe` a `factura.pdf`) para evadir controles básicos y engañar a usuarios y analistas.
+> **¿Sabías que...?** Los atacantes suelen renombrar `.exe` a `.jpg` para evadir controles. Con esta herramienta, ese engaño es detectado en milisegundos.
 
-Las herramientas tradicionales o la inspección visual simple no son suficientes para detectar estas amenazas ocultas a simple vista.
+---
 
-## 🚀 La Solución: Identify-Files
-**Identify-Files** es una herramienta de defensa activa y análisis forense diseñada para revelar la verdadera identidad de cualquier archivo. Utiliza **Magic Numbers** (firmas binarias) para ignorar la extensión declarada y analizar el contenido real del archivo.
+## 🎯 ¿Por qué Identify-Files?
+En ciberseguridad, la confianza ciega en las extensiones de archivo es un vector de compromiso crítico. 
 
-Más que un simple identificador, es una suite forense que alerta sobre discrepancias, calcula indicadores de compromiso (IOCs) y detecta técnicas de ofuscación como el "packing".
+- **Forense Real**: Basado en números mágicos, no en metadatos editables.
+- **Detección de Spoofing**: Alerta sobre discrepancias entre extensión y contenido.
+- **Análisis de Vulnerabilidades (SAST)**: Busca patrones de backdoors, shellshells y secretos expuestos dentro de los archivos.
+- **Optimizado para Gigabytes**: Motor de procesamiento por bloques que cuida tu memoria RAM.
 
 ## 🎥 Video de Demostración
 Mira la herramienta en acción:

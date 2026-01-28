@@ -169,22 +169,42 @@ def analyze_vulnerabilities(filepath):
         logger.error(f"Error analizando vulnerabilidades en [cyan]{filepath}[/cyan]: {e}")
         return []
 
+# Hash map para búsqueda de firmas optimizada
+_SIGNATURE_CACHE = None
+
 def identify_type(hex_signature, signatures_db=None):
     """
-    Compara la firma hexadecimal con la base de datos.
-    Devuelve un diccionario con la información del tipo de archivo o None si no se encuentra.
+    Compara la firma hexadecimal con la base de datos de forma optimizada.
+    Utiliza un sistema de caché indexada para evitar búsquedas lineales O(N).
     """
+    global _SIGNATURE_CACHE
+    
     if not hex_signature:
         return None
 
-    if signatures_db is None:
-        signatures_db = load_signatures()
+    # Cargar y pre-procesar firmas si no están en caché
+    if _SIGNATURE_CACHE is None:
+        if signatures_db is None:
+            signatures_db = load_signatures()
+        
+        # Indexar por el primer byte para reducir drásticamente el espacio de búsqueda
+        _SIGNATURE_CACHE = {}
+        for entry in signatures_db:
+            first_byte = entry['hex'].split(' ')[0]
+            if first_byte not in _SIGNATURE_CACHE:
+                _SIGNATURE_CACHE[first_byte] = []
+            _SIGNATURE_CACHE[first_byte].append(entry)
 
-    # Iterar a través de las firmas para encontrar una coincidencia
-    for signature_entry in signatures_db:
+    # Obtener el primer byte de la firma que estamos analizando
+    first_byte_target = hex_signature.split(' ')[0]
+    
+    # Buscar solo en el subconjunto de firmas que empiezan por ese byte
+    possible_matches = _SIGNATURE_CACHE.get(first_byte_target, [])
+    for signature_entry in possible_matches:
         signature_hex = signature_entry['hex']
         if hex_signature.startswith(signature_hex):
             return signature_entry
             
     return None
+
 
