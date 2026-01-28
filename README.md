@@ -21,11 +21,12 @@ Mira la herramienta en acción:
 
 ## ✨ Características y Beneficios Clave
 - 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
-- 🕵️ **Análisis Forense Profundo:** Cálculo automático de hashes (MD5, SHA256) y análisis de entropía para detectar cifrado/packing.
-- 📝 **Inteligencia de Strings:** Extracción de cadenas legibles para hallar URLs de C2 o mensajes ocultos.
+- 🕵️ **Análisis Forense Escalable:** Procesamiento de archivos mediante lectura por bloques (Chunking) para soportar archivos de gran tamaño sin consumo excesivo de RAM.
+- 📊 **Métricas Avanzadas:** Cálculo de hashes (MD5, SHA256) y entropía de Shannon para detectar packing/cifrado.
+- 📝 **Inteligencia de Strings:** Extracción incremental de cadenas legibles (URLs, IPs, metadatos).
 - 🎨 **Experiencia Profesional:**
-    - **CLI Hacker-Style:** Interfaz de terminal con tablas y colores (Rich).
-    - **Dashboard Web:** Panel gráfico interactivo (Streamlit) para reportes ejecutivos.
+    - **CLI Hacker-Style:** Interfaz enriquecida con `Rich`, barras de progreso y logging profesional.
+    - **Dashboard Web:** Panel gráfico interactivo (Streamlit) para análisis masivo.
 - 💾 **Base de Datos Extensible:** Firmas gestionadas en JSON externo, soportando cientos de formatos y vectores de ataque.
 
 ## 🚀 Primeros Pasos
@@ -72,8 +73,9 @@ Identify-Files/
 ├── main.py             # Punto de entrada CLI
 ├── dashboard.py        # Interfaz web (Streamlit)
 ├── src/                # Código fuente principal
-│   ├── core.py         # Motor de análisis y lógica forense
-│   ├── cli.py          # Interfaz de terminal (Rich)
+│   ├── core.py         # Motor de análisis (Optimizado para memoria)
+│   ├── cli.py          # Interfaz de terminal (Rich e integración de logs)
+│   ├── logger.py       # Sistema de eventos centralizado
 │   └── signatures.json # Base de datos de firmas
 └── tests/              # Tests unitarios
 ```

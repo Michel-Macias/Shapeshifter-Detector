@@ -1,6 +1,9 @@
+import os
+import math
+import hashlib
 import binascii
 import json
-import os
+from src.logger import logger
 
 # Ruta al archivo JSON de firmas
 SIGNATURES_FILE = os.path.join(os.path.dirname(__file__), 'signatures.json')
@@ -14,10 +17,10 @@ def load_signatures():
             data = json.load(f)
             return data.get('signatures', [])
     except FileNotFoundError:
-        print(f"Error: No se encontró el archivo de firmas en {SIGNATURES_FILE}")
+        logger.error(f"No se encontró el archivo de firmas en [bold red]{SIGNATURES_FILE}[/bold red]")
         return []
     except json.JSONDecodeError:
-        print(f"Error: El archivo de firmas {SIGNATURES_FILE} no es un JSON válido")
+        logger.error(f"El archivo de firmas [bold red]{SIGNATURES_FILE}[/bold red] no es un JSON válido")
         return []
 
 def get_file_signature(filepath, num_bytes=32):
@@ -36,11 +39,9 @@ def get_file_signature(filepath, num_bytes=32):
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f"Error leyendo el archivo {filepath}: {e}")
+        logger.error(f"Error leyendo el archivo [cyan]{filepath}[/cyan]: {e}")
         return None
 
-import hashlib
-import math
 
 def calculate_hashes(filepath):
     """
@@ -59,61 +60,78 @@ def calculate_hashes(filepath):
             "sha256": sha256_hash.hexdigest()
         }
     except Exception as e:
-        print(f"Error calculando hashes para {filepath}: {e}")
+        logger.error(f"Error calculando hashes para [cyan]{filepath}[/cyan]: {e}")
         return None
 
 def calculate_entropy(filepath):
     """
-    Calcula la entropía de Shannon del archivo.
+    Calcula la entropía de Shannon del archivo de forma eficiente por bloques.
     Valores cercanos a 8 indican alta aleatoriedad (posible cifrado/compresión).
     """
     try:
-        with open(filepath, "rb") as f:
-            data = f.read()
-            
-        if not data:
+        if not os.path.exists(filepath):
             return 0.0
+
+        filesize = os.path.getsize(filepath)
+        if filesize == 0:
+            return 0.0
+
+        byte_counts = [0] * 256
+        
+        with open(filepath, "rb") as f:
+            while True:
+                chunk = f.read(4096)
+                if not chunk:
+                    break
+                for byte in chunk:
+                    byte_counts[byte] += 1
             
         entropy = 0
-        for x in range(256):
-            p_x = float(data.count(bytes([x]))) / len(data)
-            if p_x > 0:
-                entropy += - p_x * math.log(p_x, 2)
+        for count in byte_counts:
+            if count > 0:
+                p_i = float(count) / filesize
+                entropy -= p_i * math.log(p_i, 2)
         
         return entropy
     except Exception as e:
-        print(f"Error calculando entropía para {filepath}: {e}")
+        logger.error(f"Error calculando entropía para [cyan]{filepath}[/cyan]: {e}")
         return 0.0
+
 
 def extract_strings(filepath, min_length=4):
     """
-    Extrae cadenas de texto ASCII y Unicode legibles del archivo.
-    Útil para encontrar URLs, IPs o mensajes ocultos.
+    Extrae cadenas de texto ASCII legibles del archivo de forma eficiente por bloques.
+    Mantiene el estado entre bloques para no romper cadenas en los límites de lectura.
     """
     strings = []
+    current_string = ""
+    
     try:
         with open(filepath, "rb") as f:
-            data = f.read()
-            
-        # Buscar secuencias de caracteres imprimibles
-        current_string = ""
-        for byte in data:
-            # Caracteres ASCII imprimibles (32-126)
-            if 32 <= byte <= 126:
-                current_string += chr(byte)
-            else:
-                if len(current_string) >= min_length:
-                    strings.append(current_string)
-                current_string = ""
+            while True:
+                chunk = f.read(4096)
+                if not chunk:
+                    break
+                
+                for byte in chunk:
+                    # Caracteres ASCII imprimibles (32-126)
+                    if 32 <= byte <= 126:
+                        current_string += chr(byte)
+                    else:
+                        if len(current_string) >= min_length:
+                            strings.append(current_string)
+                        current_string = ""
         
-        # Añadir la última cadena si cumple la longitud
+        # Añadir la última cadena si quedó algo al final del archivo
         if len(current_string) >= min_length:
             strings.append(current_string)
             
         return strings
     except Exception as e:
-        print(f"Error extrayendo strings para {filepath}: {e}")
+        logger.error(f"Error extrayendo strings para [cyan]{filepath}[/cyan]: {e}")
         return []
+
+
 
 def identify_type(hex_signature, signatures_db=None):
     """

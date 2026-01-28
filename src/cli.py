@@ -7,6 +7,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.progress import track
 from src.core import get_file_signature, identify_type, calculate_hashes, calculate_entropy, extract_strings
+from src.logger import logger
 
 console = Console()
 
@@ -100,7 +101,7 @@ def main():
     if os.path.isfile(args.path):
         scan_file(args.path, report_data)
     elif os.path.isdir(args.path):
-        console.print(f"[bold]Escaneando directorio: {args.path}[/bold]\n")
+        logger.info(f"Escaneando directorio: [bold]{args.path}[/bold]")
         files_to_scan = []
         for root, _, files in os.walk(args.path):
             for file in files:
@@ -111,16 +112,16 @@ def main():
             scan_file(filepath, report_data)
             
     else:
-        console.print(f"[bold red]Error: La ruta '{args.path}' no existe.[/bold red]")
+        logger.error(f"La ruta '[bold red]{args.path}[/bold red]' no existe.")
 
     # Guardar reporte si se solicitó
     if args.output and report_data is not None:
         try:
             with open(args.output, 'w') as f:
                 json.dump(report_data, f, indent=4)
-            console.print(f"[bold green]Reporte guardado exitosamente en: {args.output}[/bold green]")
+            logger.info(f"Reporte guardado exitosamente en: [bold green]{args.output}[/bold green]")
         except Exception as e:
-            console.print(f"[bold red]Error al guardar el reporte: {e}[/bold red]")
+            logger.error(f"Error al guardar el reporte: {e}")
 
 if __name__ == "__main__":
     main()
