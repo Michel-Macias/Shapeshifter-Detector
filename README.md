@@ -21,8 +21,9 @@ Mira la herramienta en acción:
 
 ## ✨ Características y Beneficios Clave
 - 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
-- 🕵️ **Análisis Forense Escalable:** Procesamiento de archivos mediante lectura por bloques (Chunking) para soportar archivos de gran tamaño sin consumo excesivo de RAM.
-- 📊 **Métricas Avanzadas:** Cálculo de hashes (MD5, SHA256) y entropía de Shannon para detectar packing/cifrado.
+- 🕵️ **Análisis Forense Escalable:** Procesamiento por bloques (Chunking) para archivos de gran tamaño.
+- 🔍 **Motor de Vulnerabilidades (SAST):** Análisis estático en busca de IoCs, backdoors, inyecciones de código (eval/os.system) y secretos hardcodeados.
+- 📊 **Métricas Avanzadas:** Cálculo de hashes (MD5, SHA256) y entropía de Shannon.
 - 📝 **Inteligencia de Strings:** Extracción incremental de cadenas legibles (URLs, IPs, metadatos).
 - 🎨 **Experiencia Profesional:**
     - **CLI Hacker-Style:** Interfaz enriquecida con `Rich`, barras de progreso y logging profesional.

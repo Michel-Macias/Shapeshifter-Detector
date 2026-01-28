@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
 from rich.progress import track
-from src.core import get_file_signature, identify_type, calculate_hashes, calculate_entropy, extract_strings
+from src.core import get_file_signature, identify_type, calculate_hashes, calculate_entropy, extract_strings, analyze_vulnerabilities
 from src.logger import logger
 
 console = Console()
@@ -40,6 +40,7 @@ def scan_file(filepath, report_list=None):
     hashes = calculate_hashes(filepath)
     entropy = calculate_entropy(filepath)
     strings = extract_strings(filepath)
+    vulnerabilities = analyze_vulnerabilities(filepath)
     
     file_type = type_info['type'] if type_info else "Desconocido"
     is_mismatch = check_mismatch(filepath, type_info)
@@ -73,6 +74,20 @@ def scan_file(filepath, report_list=None):
     if is_mismatch:
         console.print(Panel("[bold red]! ALERTA CRÍTICA: La extensión no coincide con el tipo real. Posible intento de Spoofing.[/bold red]", border_style="red"))
     
+    # Mostrar vulnerabilidades si existen
+    if vulnerabilities:
+        v_table = Table(title="[bold red]Hallazgos de Seguridad[/bold red]", show_header=True, box=None)
+        v_table.add_column("Línea", style="cyan")
+        v_table.add_column("Riesgo", style="bold red")
+        v_table.add_column("Detección")
+        
+        for v in vulnerabilities[:10]: # Limitar a 10 hallazgos para no saturar
+            v_table.add_row(str(v['line']), v['severity'], v['rule'])
+            
+        console.print(Panel(v_table, border_style="red"))
+        if len(vulnerabilities) > 10:
+            console.print(f"[dim]... y {len(vulnerabilities) - 10} hallazgos más.[/dim]")
+    
     console.print("-" * 40)
     
     # Añadir al reporte
@@ -84,7 +99,8 @@ def scan_file(filepath, report_list=None):
             "extension_mismatch": is_mismatch,
             "hashes": hashes,
             "entropy": entropy,
-            "strings_preview": strings[:20]
+            "strings_preview": strings[:20],
+            "vulnerabilities": vulnerabilities
         }
         report_list.append(report_entry)
 

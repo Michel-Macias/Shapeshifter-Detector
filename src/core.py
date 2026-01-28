@@ -3,6 +3,7 @@ import math
 import hashlib
 import binascii
 import json
+import re
 from src.logger import logger
 
 # Ruta al archivo JSON de firmas
@@ -132,6 +133,41 @@ def extract_strings(filepath, min_length=4):
         return []
 
 
+
+
+def analyze_vulnerabilities(filepath):
+    """
+    Realiza un análisis estático del archivo buscando patrones de vulnerabilidades
+    o indicadores de compromiso (IoC) comunes.
+    """
+    findings = []
+    
+    # Patrones de riesgo comunes (Regex)
+    RULES = [
+        {"name": "Ejecución de Código Dinámico", "pattern": r"(eval\(|exec\(|os\.system\(|subprocess\.Popen\()", "severity": "Alta"},
+        {"name": "Posible Web Shell / Ofuscación", "pattern": r"(base64_decode|eval\(gzinflate|eval\(base64_decode)", "severity": "Crítica"},
+        {"name": "Hardcoded Secret/Token", "pattern": r"(API_KEY|SECRET|PASSWORD|TOKEN)\s*=\s*['\"][a-zA-Z0-9\-_]{16,}['\"]", "severity": "Media"},
+        {"name": "Llamada al Sistema Riesgosa", "pattern": r"(mprotect|ptrace|syscall|VirtualAllocEx)", "severity": "Alta"},
+        {"name": "Conexión a Red Sospechosa", "pattern": r"(socket\.socket|requests\.get|urllib\.request|nc\s+-e)", "severity": "Media"},
+        {"name": "Bypass de Seguridad (uac/amsi)", "pattern": r"(AmsiScanBuffer|FodHelper|CmpRegistryTransaction)", "severity": "Crítica"}
+    ]
+
+    try:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            # Leer línea a línea para ser eficiente con la memoria
+            for line_num, line in enumerate(f, 1):
+                for rule in RULES:
+                    if re.search(rule["pattern"], line, re.IGNORECASE):
+                        findings.append({
+                            "rule": rule["name"],
+                            "severity": rule["severity"],
+                            "line": line_num,
+                            "content": line.strip()[:50] + "..."
+                        })
+        return findings
+    except Exception as e:
+        logger.error(f"Error analizando vulnerabilidades en [cyan]{filepath}[/cyan]: {e}")
+        return []
 
 def identify_type(hex_signature, signatures_db=None):
     """
