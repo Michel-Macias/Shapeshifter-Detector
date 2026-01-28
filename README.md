@@ -53,15 +53,20 @@ pip install -r requirements.txt
 ## 🎯 Uso Detallado
 
 ### Modo Terminal (CLI)
-Ideal para análisis rápido o integración en scripts.
+Ideal para análisis rápido o integración en scripts. El análisis forense y el escaneo de vulnerabilidades se ejecutan de forma **autónoma** en cada archivo.
 
 ```bash
-# Escaneo de un solo archivo
+# Escaneo de un solo archivo (Muestra firmas, hashes, entropía y vulnerabilidades)
 python3 main.py archivo_sospechoso.exe
 
-# Escaneo masivo de directorio con reporte JSON
+# Escaneo masivo de directorio con reporte JSON completo
 python3 main.py /ruta/descargas --output reporte_forense.json
 ```
+
+**Interpretación de Alertas:**
+- 🔴 **ALERTA CRÍTICA (Spoofing)**: El archivo miente sobre su extensión.
+- 🟡 **ADVERTENCIA (Entropía)**: El archivo podría estar cifrado o empaquetado (común en malware).
+- 🚩 **Hallazgos de Seguridad (SAST)**: Lista de líneas sospechosas (ej. sockets, exec, eval) detectadas en el código.
 
 ### Modo Gráfico (Dashboard)
 Ideal para visualizar hallazgos y presentar reportes.
