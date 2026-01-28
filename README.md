@@ -2,6 +2,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TDD Certified](https://img.shields.io/badge/Methodology-TDD-green.svg)](https://en.wikipedia.org/wiki/Test-driven_development)
+[![Security Scan Status](https://github.com/Michel-Macias/Shapeshifter-Detector/actions/workflows/security-scan.yml/badge.svg)](https://github.com/Michel-Macias/Shapeshifter-Detector/actions/workflows/security-scan.yml)
 [![Security Scan](https://img.shields.io/badge/Security-SAST%20Enabled-red.svg)](#)
 
 **Identify-Files** (nombre en GitHub: *Shapeshifter-Detector*) es una herramienta de defensa activa y análisis forense diseñada para revelar la verdadera identidad de cualquier archivo. Ignora la extensión declarada y analiza el **contenido binario real** (Magic Numbers).

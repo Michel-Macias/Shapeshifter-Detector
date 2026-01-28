@@ -1,0 +1,36 @@
+name: Security Scan (Identify-Files)
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v3
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Ejecutar Auditoría Forense y de Seguridad
+      run: |
+        # Escaneamos la raíz del proyecto para buscar vulnerabilidades o spoofing
+        python3 main.py . --output security_report.json
+      
+    - name: Subir Reporte Forense
+      uses: actions/upload-artifact@v4
+      with:
+        name: forensic-security-report
+        path: security_report.json
