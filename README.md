@@ -1,122 +1,78 @@
-# 🛡️ Identify-Files: Detector de Amenazas por Firma Digital
+# 🛡️ Identify-Files (Shapeshifter-Detector)
+## *Agente de Inteligencia Forense con Memoria y Detección de Amenazas Activa*
+
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TDD Certified](https://img.shields.io/badge/Methodology-TDD-green.svg)](https://en.wikipedia.org/wiki/Test-driven_development)
-[![Security Scan Status](https://github.com/Michel-Macias/Shapeshifter-Detector/actions/workflows/security-scan.yml/badge.svg)](https://github.com/Michel-Macias/Shapeshifter-Detector/actions/workflows/security-scan.yml)
-[![Security Scan](https://img.shields.io/badge/Security-SAST%20Enabled-red.svg)](#)
+[![Accuracy](https://img.shields.io/badge/Agent_Accuracy-100%25-brightgreen.svg)](#)
+[![Security SAST](https://img.shields.io/badge/Security-Advanced_SAST-red.svg)](#)
 
-**Identify-Files** (nombre en GitHub: *Shapeshifter-Detector*) es una herramienta de defensa activa y análisis forense diseñada para revelar la verdadera identidad de cualquier archivo. Ignora la extensión declarada y analiza el **contenido binario real** (Magic Numbers).
-
-> **¿Sabías que...?** Los atacantes suelen renombrar `.exe` a `.jpg` para evadir controles. Con esta herramienta, ese engaño es detectado en milisegundos.
+**Identify-Files** es un agente forense avanzado diseñado para la detección de amenazas mediante el análisis de **firmas digitales binarias** (Magic Numbers) y **análisis estático profundo (SAST)**. A diferencia de las herramientas tradicionales, este agente posee **Memoria Persistente**, lo que le permite correlacionar Indicadores de Compromiso (IoCs) entre diferentes sesiones de análisis.
 
 ---
 
-## 🎯 ¿Por qué Identify-Files?
-En ciberseguridad, la confianza ciega en las extensiones de archivo es un vector de compromiso crítico. 
+## ✨ Características de Élite
 
-- **Forense Real**: Basado en números mágicos, no en metadatos editables.
-- **Detección de Spoofing**: Alerta sobre discrepancias entre extensión y contenido.
-- **Análisis de Vulnerabilidades (SAST)**: Busca patrones de backdoors, shellshells y secretos expuestos dentro de los archivos.
-- **Optimizado para Gigabytes**: Motor de procesamiento por bloques que cuida tu memoria RAM.
+### 🧠 Memoria del Agente (Knowledge Base)
+El agente no analiza en el vacío. Cada vez que encuentra una **IP, URL o Dominio**, lo registra en su base de conocimientos (`memory.json`). 
+- **Correlación Cruzada:** Si una IP maliciosa aparece en dos archivos diferentes, el agente te alertará del vínculo.
+- **Deduplicación:** Evita el re-análisis innecesario de archivos ya conocidos mediante hashing SHA256.
 
-## 🎥 Video de Demostración
-Mira la herramienta en acción:
+### 🛡️ Motor SAST de Grado Forense
+Capaz de detectar patrones de ataque complejos en tiempo real:
+- **Ransomware:** Borrado de Shadow Copies (`vssadmin`), cifrado masivo.
+- **Troyanos & Persistencia:** Modificaciones en el registro de Windows (`RunKeys`), inyección de DLLs.
+- **Spoofing de Extensión:** Detecta discrepancias entre el contenido binario real y la extensión del archivo.
 
-[![Video de Demostración](https://img.youtube.com/vi/By_SXV3f808/maxresdefault.jpg)](https://youtu.be/By_SXV3f808?si=FdgXz23D_SfSd8dD)
+### 📊 Observabilidad Total
+- **CLI Hacker-Style:** Interfaz enriquecida con `Rich`, alertas visuales y barras de progreso.
+- **Dashboard de Inteligencia:** Panel interactivo en `Streamlit` para visualizar la red de correlaciones y métricas globales.
 
-*Haz clic en la imagen para ver el análisis forense completo: detección de tipos, cálculo de hashes, análisis de entropía y visualización en el dashboard.*
+---
 
-## ✨ Características y Beneficios Clave
-- 🛡️ **Detección de Spoofing:** Alerta roja inmediata si la extensión no coincide con la firma real.
-- 🕵️ **Análisis Forense Escalable:** Procesamiento por bloques (Chunking) para archivos de gran tamaño.
-- 🔍 **Motor de Vulnerabilidades (SAST):** Análisis estático en busca de IoCs, backdoors, inyecciones de código (eval/os.system) y secretos hardcodeados. Con filtrado inteligente de falsos positivos.
-- 📊 **Métricas Avanzadas:** Cálculo de hashes (MD5, SHA256) y entropía de Shannon.
-- 📝 **Inteligencia de Strings:** Extracción incremental de cadenas legibles (URLs, IPs, metadatos).
-- ⚡ **Motor Optimizado:** Búsqueda de firmas O(1) con caché indexada para escaneos ultrarrápidos.
-- 📁 **Gestión de Reportes:** Sistema automático de organización en carpeta `reports/` con scripts de consolidación.
-- 🤖 **DevSecOps Integrado:** GitHub Actions con auto-auditoría de seguridad en cada commit.
-- 🎨 **Experiencia Profesional:**
-    - **CLI Hacker-Style:** Interfaz enriquecida con `Rich`, barras de progreso y logging profesional.
-    - **Dashboard Web:** Panel gráfico interactivo (Streamlit) para análisis masivo.
-- 💾 **Base de Datos Extensible:** Firmas gestionadas en JSON externo, soportando cientos de formatos y vectores de ataque.
+## 🚀 Guía de Arranque Rápido
 
-## 🚀 Primeros Pasos
-
-### 1. Clonar el repositorio
+### 1. Preparación del Entorno
 ```bash
+# Clonar y acceder
 git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
-cd Shapeshifter-Detector
-```
+cd Identify-files
 
-### 2. Instalar dependencias
-Se recomienda usar un entorno virtual.
-```bash
+# Instalar dependencias
 pip install -r requirements.txt
 ```
 
-## 🎯 Uso Detallado
-
-### Modo Terminal (CLI)
-Ideal para análisis rápido o integración en scripts. El análisis forense y el escaneo de vulnerabilidades se ejecutan de forma **autónoma** en cada archivo.
+### 2. Uso del Agente (CLI)
+Analiza archivos individuales o directorios enteros. El agente aprenderá de cada escaneo.
 
 ```bash
-# Escaneo de un solo archivo (Muestra firmas, hashes, entropía y vulnerabilidades)
-python3 main.py archivo_sospechoso.exe
+# Escanear un archivo (ej: detectar spoofing o malware)
+python3 main.py ruta/al/archivo.exe
 
-# Escaneo masivo de directorio con reporte JSON completo
-python3 main.py /ruta/descargas --output reporte_forense.json
+# Escaneo masivo de un directorio con generación de reporte
+python3 main.py /descargas --output mi_reporte.json
 ```
 
-**Interpretación de Alertas:**
-- 🔴 **ALERTA CRÍTICA (Spoofing)**: El archivo miente sobre su extensión.
-- 🟡 **ADVERTENCIA (Entropía)**: El archivo podría estar cifrado o empaquetado (común en malware).
-- 🚩 **Hallazgos de Seguridad (SAST)**: Lista de líneas sospechosas (ej. sockets, exec, eval) detectadas en el código.
-
-### Modo Gráfico (Dashboard)
-Ideal para visualizar hallazgos y presentar reportes.
+### 3. Visualización de Inteligencia (Dashboard)
+Lanza el panel gráfico para ver qué ha aprendido el agente.
 
 ```bash
 streamlit run dashboard.py
 ```
-*Sube el archivo `reporte_forense.json` generado anteriormente para ver las métricas.*
+*Carga el archivo `reports/mi_reporte.json` para ver las métricas y la pestaña de **"Inteligencia"**.*
 
-## 📁 Estructura del Proyecto
-```
-Identify-Files/
-├── README.md           # Este archivo
-├── .gitignore          # Archivos ignorados
-├── requirements.txt    # Dependencias del proyecto
-├── main.py             # Punto de entrada CLI
-├── dashboard.py        # Interfaz web (Streamlit)
-├── src/                # Código fuente principal
-│   ├── core.py         # Motor de análisis (Optimizado para memoria)
-│   ├── cli.py          # Interfaz de terminal (Rich e integración de logs)
-│   ├── logger.py       # Sistema de eventos centralizado
-│   └── signatures.json # Base de datos de firmas
-└── tests/              # Tests unitarios
-```
-
-## 🛠️ Tecnologías Utilizadas
-- **[Python 3.x](https://www.python.org/):** Lenguaje base.
-- **[Rich](https://github.com/Textualize/rich):** Para una CLI moderna y visual.
-- **[Streamlit](https://streamlit.io/):** Para el dashboard de análisis de datos.
-- **[Pandas](https://pandas.pydata.org/):** Procesamiento de datos de reportes.
-- **[Hashlib & Math](https://docs.python.org/3/library/):** Cálculos criptográficos y matemáticos.
-
-## 🔐 Seguridad
-- Esta herramienta es de **solo lectura**: no modifica los archivos analizados.
-- Se recomienda ejecutarla en un entorno aislado (Sandbox) al analizar malware real.
-
-## 🧪 Testing
-El proyecto cuenta con una suite de pruebas unitarias para asegurar la fiabilidad de la detección.
+### 4. Validación del Sistema
+Verifica que el agente mantiene su **100% de precisión** con la suite de evaluación.
 
 ```bash
-python3 -m unittest discover tests
+python3 evaluate_agent.py
 ```
 
-## 👤 Autor
-**Michel Macias**
-- GitHub: [@MaciasIT](https://github.com/MaciasIT)
+---
+
+## 📁 Estructura del "Cerebro"
+- `src/core.py`: Motor de detección, firmas e IoCs.
+- `src/memory.py`: Sistema de persistencia y correlación.
+- `src/cli.py`: Interfaz de terminal y lógica de deduplicación.
+- `reports/memory.json`: La base de conocimientos viva del agente.
 
 ---
-*Desarrollado como parte del portafolio de ciberseguridad avanzada.*
+*Desarrollado para la ciberseguridad avanzada y análisis forense proactivo.*

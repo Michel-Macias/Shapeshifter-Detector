@@ -132,8 +132,48 @@ def extract_strings(filepath, min_length=4):
         logger.error(f"Error extrayendo strings para [cyan]{filepath}[/cyan]: {e}")
         return []
 
+def identify_iocs(strings):
+    """
+    Analiza una lista de strings en busca de Indicadores de Compromiso (IoCs).
+    Retorna un diccionario clasificado por tipo (IPs, URLs, Dominios).
+    """
+    iocs = {
+        "ips": set(),
+        "urls": set(),
+        "domains": set()
+    }
+    
+    # Regex para IPv4
+    ip_pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b"
+    # Regex para URLs (http/https/ftp)
+    url_pattern = r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+[/\w\.-]*"
+    # Regex para dominios (muy simplificado para evitar falsos positivos)
+    domain_pattern = r"\b[a-zA-Z0-9.-]+\.(?:com|net|org|io|gov|edu|xyz|top|pw|sh|bin)\b"
 
+    for s in strings:
+        # Buscar IPs
+        ips = re.findall(ip_pattern, s)
+        for ip in ips:
+            # Validación básica de octetos (0-255)
+            try:
+                if all(0 <= int(part) <= 255 for part in ip.split('.')):
+                    iocs["ips"].add(ip)
+            except ValueError:
+                continue
+        
+        # Buscar URLs
+        urls = re.findall(url_pattern, s)
+        for url in urls:
+            iocs["urls"].add(url)
+            
+        # Buscar Dominios (solo si no es ya una URL o IP)
+        if not urls and not ips:
+            domains = re.findall(domain_pattern, s)
+            for domain in domains:
+                iocs["domains"].add(domain)
 
+    # Convertir sets a listas para serialización JSON
+    return {k: list(v) for k, v in iocs.items() if v}
 
 def analyze_vulnerabilities(filepath):
     """
@@ -151,10 +191,22 @@ def analyze_vulnerabilities(filepath):
     
     # Patrones de riesgo comunes (Regex)
     RULES = [
+        # --- CÓDIGO DINÁMICO Y OFUSCACIÓN ---
         {"name": "Ejecución de Código Dinámico", "pattern": r"(eval\(|exec\(|os\.system\(|subprocess\.Popen\()", "severity": "Alta"},
         {"name": "Posible Web Shell / Ofuscación", "pattern": r"(base64_decode|eval\(gzinflate|eval\(base64_decode)", "severity": "Crítica"},
         {"name": "Hardcoded Secret/Token", "pattern": r"(API_KEY|SECRET|PASSWORD|TOKEN)\s*=\s*['\"][a-zA-Z0-9\-_]{16,}['\"]", "severity": "Media"},
-        {"name": "Llamada al Sistema Riesgosa", "pattern": r"(mprotect|ptrace|syscall|VirtualAllocEx)", "severity": "Alta"},
+        
+        # --- RANSOMWARE & DESTRUCCIÓN ---
+        {"name": "Borrado de Copias de Seguridad (Shadow Copies)", "pattern": r"(vssadmin\.exe\s+delete\s+shadows|wmic\s+shadowcopy\s+delete)", "severity": "Crítica"},
+        {"name": "Cifrado Masivo (Posible Ransomware)", "pattern": r"(AES\.new\(|Fernet\.generate_key\(|RSA\.import_key\()", "severity": "Alta"},
+        {"name": "Modificación de Arranque (BCD)", "pattern": r"(bcdedit\s+/set\s+{default}\s+recoveryenabled\s+no)", "severity": "Crítica"},
+        
+        # --- TROYANOS & PERSISTENCIA ---
+        {"name": "Persistencia en Registro (Run Keys)", "pattern": r"(RegSetValue|RegCreateKey|CurrentVersion\\Run|HKEY_LOCAL_MACHINE\\Software|Software\\Microsoft\\Windows\\CurrentVersion)", "severity": "Alta"},
+        {"name": "Inyección de DLL / Hooking", "pattern": r"(SetWindowsHookEx|CreateRemoteThread|VirtualAllocEx|WriteProcessMemory)", "severity": "Crítica"},
+        {"name": "Descarga de Payloads Externos", "pattern": r"(powershell.*IEX.*DownloadString|curl\s+-O\s+http|wget\s+http)", "severity": "Alta"},
+        
+        # --- RED & EXFILTRACIÓN ---
         {"name": "Conexión a Red Sospechosa", "pattern": r"(socket\.socket|requests\.get|urllib\.request|nc\s+-e)", "severity": "Media"},
         {"name": "Bypass de Seguridad (uac/amsi)", "pattern": r"(AmsiScanBuffer|FodHelper|CmpRegistryTransaction)", "severity": "Crítica"}
     ]
@@ -213,5 +265,3 @@ def identify_type(hex_signature, signatures_db=None):
             return signature_entry
             
     return None
-
-

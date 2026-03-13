@@ -1,12 +1,17 @@
 import argparse
 import os
 import json
+from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
 from rich.progress import track
-from src.core import get_file_signature, identify_type, calculate_hashes, calculate_entropy, extract_strings, analyze_vulnerabilities
+from src.core import (
+    get_file_signature, identify_type, calculate_hashes, 
+    calculate_entropy, extract_strings, identify_iocs, analyze_vulnerabilities
+)
+from src.memory import memory
 from src.logger import logger
 
 console = Console()
@@ -32,19 +37,46 @@ def check_mismatch(filepath, detected_type_info):
 def scan_file(filepath, report_list=None):
     """
     Escanea un archivo individual y muestra los resultados usando Rich.
+    Integra la Memoria del Agente para deduplicación y correlación de IoCs.
     """
+    # 1. Calcular hashes primero para consultar la Memoria
+    hashes = calculate_hashes(filepath)
+    if not hashes:
+        return
+    
+    sha256 = hashes['sha256']
+    
+    # 2. Consultar Memoria (Deduplicación)
+    previous_analysis = memory.get_analysis(sha256)
+    if previous_analysis:
+        console.print(Panel(
+            f"🧠 [bold cyan]Agente:[/bold cyan] Ya analicé este archivo anteriormente.\n"
+            f"📅 [dim]Fecha:[/dim] {previous_analysis.get('timestamp')}\n"
+            f"📊 [dim]Resultado:[/dim] {previous_analysis.get('filename')}",
+            title="[bold blue]Conocimiento Previo[/bold blue]", border_style="cyan"
+        ))
+
+    # 3. Análisis Forense Completo
     signature = get_file_signature(filepath)
     type_info = identify_type(signature)
-    
-    # Análisis Forense
-    hashes = calculate_hashes(filepath)
     entropy = calculate_entropy(filepath)
     strings = extract_strings(filepath)
+    iocs = identify_iocs(strings)
     vulnerabilities = analyze_vulnerabilities(filepath)
+    
+    # Buscar correlaciones en la memoria global
+    correlations = memory.find_correlations(iocs)
     
     file_type = type_info['type'] if type_info else "Desconocido"
     is_mismatch = check_mismatch(filepath, type_info)
     
+    # Calcular un "Threat Score" simple para la memoria
+    threat_score = 0
+    if is_mismatch: threat_score += 50
+    if entropy > 7.5: threat_score += 20
+    if vulnerabilities: threat_score += 30
+    if correlations: threat_score += 10 * len(correlations)
+
     # Crear tabla de resultados
     table = Table(title=f"Análisis: {os.path.basename(filepath)}", show_header=False, box=None)
     table.add_row("Ruta", filepath)
@@ -60,33 +92,50 @@ def scan_file(filepath, report_list=None):
     entropy_style = "bold red" if entropy > 7.5 else "green"
     table.add_row("Entropía", Text(f"{entropy:.2f}", style=entropy_style))
     
-    if strings:
-        strings_preview = ", ".join(strings[:5])
-        table.add_row("Strings (Preview)", Text(strings_preview, style="dim"))
+    # Mostrar IoCs detectados
+    if iocs:
+        ioc_summary = []
+        for ioc_type, items in iocs.items():
+            ioc_summary.append(f"{ioc_type.upper()}: {len(items)}")
+        table.add_row("IoCs Detectados", ", ".join(ioc_summary))
 
     # Mostrar tabla
     console.print(Panel(table, title="[bold blue]Resultados del Escaneo[/bold blue]", border_style="blue"))
 
-    # Alertas
+    # Alertas y Correlaciones
+    if correlations:
+        c_text = Text("🧠 Correlaciones Detectadas:\n", style="bold cyan")
+        for item, hashes_list in correlations.items():
+            c_text.append(f"  • {item} ", style="white")
+            c_text.append(f"(visto en {len(hashes_list)} archivos previos)\n", style="dim")
+        console.print(Panel(c_text, title="[bold cyan]Memoria del Agente[/bold cyan]", border_style="cyan"))
+
     if entropy > 7.5:
         console.print(Panel("[bold yellow]! ADVERTENCIA: Entropía muy alta (>7.5). Posible archivo cifrado o empaquetado.[/bold yellow]", border_style="yellow"))
     
     if is_mismatch:
         console.print(Panel("[bold red]! ALERTA CRÍTICA: La extensión no coincide con el tipo real. Posible intento de Spoofing.[/bold red]", border_style="red"))
     
-    # Mostrar vulnerabilidades si existen
+    # Mostrar vulnerabilidades
     if vulnerabilities:
-        v_table = Table(title="[bold red]Hallazgos de Seguridad[/bold red]", show_header=True, box=None)
+        v_table = Table(title="[bold red]Hallazgos de Seguridad (SAST)[/bold red]", show_header=True, box=None)
         v_table.add_column("Línea", style="cyan")
         v_table.add_column("Riesgo", style="bold red")
         v_table.add_column("Detección")
         
-        for v in vulnerabilities[:10]: # Limitar a 10 hallazgos para no saturar
+        for v in vulnerabilities[:5]: 
             v_table.add_row(str(v['line']), v['severity'], v['rule'])
             
         console.print(Panel(v_table, border_style="red"))
-        if len(vulnerabilities) > 10:
-            console.print(f"[dim]... y {len(vulnerabilities) - 10} hallazgos más.[/dim]")
+
+    # 4. Guardar en Memoria (Aprender)
+    memory_results = {
+        "timestamp": datetime.now().isoformat(),
+        "threat_score": threat_score,
+        "findings": [v['rule'] for v in vulnerabilities],
+        "iocs": iocs
+    }
+    memory.learn_analysis(sha256, filepath, memory_results)
     
     console.print("-" * 40)
     
@@ -99,7 +148,8 @@ def scan_file(filepath, report_list=None):
             "extension_mismatch": is_mismatch,
             "hashes": hashes,
             "entropy": entropy,
-            "strings_preview": strings[:20],
+            "iocs": iocs,
+            "correlations": correlations,
             "vulnerabilities": vulnerabilities
         }
         report_list.append(report_entry)
