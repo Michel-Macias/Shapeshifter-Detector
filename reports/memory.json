@@ -6149,122 +6149,122 @@
         },
         "456acb8c6f2b146098e486ae4b4e9e50a4f344dbd168da60c10d6ac12bcab29b": {
             "filename": "code_1.105.1-1760482543_amd64.deb",
-            "timestamp": "2026-03-13T10:15:36.576975",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:29:54.775171",
+            "threat_score": 60,
             "findings": []
         },
         "fffc7373be73c59ade0df38494e1b1277df72304f81d6584752c828ffd90359e": {
             "filename": "Termius.deb",
-            "timestamp": "2026-03-13T10:16:04.512740",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:30:49.297696",
+            "threat_score": 50,
             "findings": []
         },
         "2bf1cfb2e9fee23b04b6502e8528a3d4d11cdf473aca557f388157d6f1b96076": {
             "filename": "code_1.103.2-1755709794_amd64.deb",
-            "timestamp": "2026-03-13T10:17:09.599143",
+            "timestamp": "2026-03-13T11:34:11.620624",
             "threat_score": 70,
             "findings": []
         },
         "f6137031651bb56b03bca73d86f7db23b3cd5589b52f59812ee5cf943cc81b8d": {
             "filename": "google-chrome-stable_current_amd64.deb",
-            "timestamp": "2026-03-13T10:17:45.435120",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:35:43.981956",
+            "threat_score": 100,
             "findings": []
         },
         "d03af814303254f083104a848286d1624a73b2eb3c1ec315263aabe3d561c0bb": {
             "filename": "Maltego.v4.11.1.deb",
-            "timestamp": "2026-03-13T10:18:53.476075",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:38:06.768558",
+            "threat_score": 110,
             "findings": []
         },
         "c8d665c1a7b2a2f0399f3dd6ce2b4ab9c876aecb3627f1045e3c135b32533ce2": {
             "filename": "discord-0.0.111.deb",
-            "timestamp": "2026-03-13T10:19:25.405763",
-            "threat_score": 40,
+            "timestamp": "2026-03-13T11:38:56.909004",
+            "threat_score": 70,
             "findings": []
         },
         "eee39216f0e6750fe08f11d17beb1b7e132557db3ed87dcd389cd3d035c4a4c1": {
             "filename": "LLMAll_en-US_FINAL.pdf",
-            "timestamp": "2026-03-13T10:19:30.151253",
+            "timestamp": "2026-03-13T11:39:05.233091",
             "threat_score": 0,
             "findings": []
         },
         "44e49e9d5e0850bbc6f768d01edd743d49b240ffcee2e7d3496ab0b8ce4ade41": {
             "filename": "AutomatizacionPythonCertificadoGoogle.pdf",
-            "timestamp": "2026-03-13T10:19:30.257891",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:39:05.543242",
+            "threat_score": 30,
             "findings": []
         },
         "213120e389195f705d62e472c8e7dfb9587b99cdbd693546d52f5178ad15a2b0": {
-            "filename": "DOC-20260120-WA0004.pdf",
-            "timestamp": "2026-03-13T10:21:21.092901",
-            "threat_score": 80,
+            "filename": "inmamu\u00f1eca",
+            "timestamp": "2026-03-13T11:39:16.171053",
+            "threat_score": 130,
             "findings": []
         },
         "d4cd80a303a8810e85f9850843c273ee4dff0f2956d50365a187ea26db8d0cce": {
             "filename": "analisis_Lynis.pdf",
-            "timestamp": "2026-03-13T10:19:36.774300",
+            "timestamp": "2026-03-13T11:39:16.735374",
             "threat_score": 0,
             "findings": []
         },
         "071b1722e9d11448e8b6982d52cf7ce0026baa7e1f55968b4ce1f41662a332e6": {
             "filename": "Ethical Hacking Course.pdf",
-            "timestamp": "2026-03-13T10:19:38.904053",
-            "threat_score": 30,
+            "timestamp": "2026-03-13T11:39:20.940106",
+            "threat_score": 110,
             "findings": []
         },
         "de6a8789a1b2e2dbacc7522da101c791fe5727b001a11a2b5fa7f10a996935f2": {
             "filename": "Instalaci\u00f3n y Uso de Wazuh SIEM.pdf",
-            "timestamp": "2026-03-13T10:19:39.037190",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:39:21.242705",
+            "threat_score": 370,
             "findings": []
         },
         "25787a4e6f256d48eaf8139320a971f757c1a919c02cb7018d35a81dc2671e6b": {
             "filename": "Recuperaci\u00f3n en caso de cat\u00e1strofe y continuidad del negocio (Business-to-Business).pdf",
-            "timestamp": "2026-03-13T10:19:39.070736",
+            "timestamp": "2026-03-13T11:39:22.295587",
             "threat_score": 20,
             "findings": []
         },
         "65e3bd59f99c411b055c6caf2bac96ab361dff8c010e4bef532a593ce10345ff": {
             "filename": "Agentic-AI-Threats-and-Mitigations-1.1.pdf",
-            "timestamp": "2026-03-13T10:19:39.898853",
+            "timestamp": "2026-03-13T11:39:24.514721",
             "threat_score": 20,
             "findings": []
         },
         "59c591839b03285b01bf98899cc95e00271776fb59fb3da599ad855e69e88694": {
             "filename": "Guardianes_Digitales_2026.pdf",
-            "timestamp": "2026-03-13T10:19:43.165525",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:39:31.551837",
+            "threat_score": 30,
             "findings": []
         },
         "a818b36a2c42296a13861a22ca27a04b67288bcc96a36398e6a21a04d7a23e18": {
             "filename": "Microsoft-Digital-Defense-Report-2025.pdf",
-            "timestamp": "2026-03-13T10:19:46.423018",
-            "threat_score": 80,
+            "timestamp": "2026-03-13T11:39:37.559748",
+            "threat_score": 350,
             "findings": []
         },
         "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09": {
             "filename": "scph5502.bin",
-            "timestamp": "2026-03-13T10:19:46.622138",
+            "timestamp": "2026-03-13T11:39:38.335276",
             "threat_score": 0,
             "findings": []
         },
         "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef": {
             "filename": "scph5501_copi.bin",
-            "timestamp": "2026-03-13T10:19:47.579552",
+            "timestamp": "2026-03-13T11:39:41.878516",
             "threat_score": 0,
             "findings": []
         },
         "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb": {
             "filename": "scph5500.bin",
-            "timestamp": "2026-03-13T10:19:47.011731",
+            "timestamp": "2026-03-13T11:39:39.275035",
             "threat_score": 0,
             "findings": []
         },
         "adadf14b969fa4aedc543590ac0e051d01889bc0d9c73e5537612b2f52e277d4": {
             "filename": "An\u00e1lisis_Cr\u00edtico_de_El_Arte_del_Pensamiento_Estrat\u00e9gico_C\u00f3mo_ (online-audio-converter.com).mp3",
-            "timestamp": "2026-03-13T10:19:52.807756",
-            "threat_score": 20,
+            "timestamp": "2026-03-13T11:39:55.539186",
+            "threat_score": 30,
             "findings": []
         },
         "29bd6d1f82e86a99cfe574838524ed71a596ae02c0ef4ff660afd8e3acab5d7b": {

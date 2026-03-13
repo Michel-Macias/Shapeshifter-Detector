@@ -183,7 +183,11 @@ def load_memory():
 # Interface Principal
 show_module_intro()
 
-# ... (Sidebar code stays the same) ...
+with st.sidebar:
+    st.header("📂 Carga de Inteligencia")
+    uploaded_file = st.file_uploader("Subir reporte JSON del Agente", type=["json"])
+    st.markdown("---")
+    st.info("💡 Consejo: Analiza archivos con `main.py` y carga el reporte generado aquí.")
 
 if uploaded_file:
     data = load_data(uploaded_file)
