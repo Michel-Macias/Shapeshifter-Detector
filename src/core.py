@@ -175,12 +175,21 @@ def identify_iocs(strings):
     # Convertir sets a listas para serialización JSON
     return {k: list(v) for k, v in iocs.items() if v}
 
+try:
+    import yara
+    YARA_AVAILABLE = True
+except ImportError:
+    YARA_AVAILABLE = False
+
+# Ruta al directorio de reglas YARA
+YARA_RULES_DIR = os.path.join(os.path.dirname(__file__), '..', 'rules')
+
 def analyze_vulnerabilities(filepath):
     """
     Realiza un análisis estático del archivo buscando patrones de vulnerabilidades
     o indicadores de compromiso (IoC) comunes.
     
-    Excluye archivos de definición de tipos (.pyi) para reducir falsos positivos.
+    Combina reglas basadas en Regex con escaneo YARA si está disponible.
     """
     
     # Excluir archivos de definición de tipos de Python
@@ -189,6 +198,25 @@ def analyze_vulnerabilities(filepath):
     
     findings = []
     
+    # --- ANÁLISIS YARA (Si está disponible) ---
+    if YARA_AVAILABLE and os.path.exists(YARA_RULES_DIR):
+        try:
+            # Compilar todas las reglas en el directorio
+            rule_files = {f: os.path.join(YARA_RULES_DIR, f) for f in os.listdir(YARA_RULES_DIR) if f.endswith('.yar')}
+            if rule_files:
+                rules = yara.compile(filepaths=rule_files)
+                matches = rules.match(filepath)
+                for match in matches:
+                    findings.append({
+                        "rule": f"YARA: {match.rule}",
+                        "severity": match.meta.get("severity", "Alta"),
+                        "line": "N/A",
+                        "content": match.meta.get("description", "Coincidencia de regla YARA")
+                    })
+        except Exception as e:
+            logger.error(f"Error en escaneo YARA para [cyan]{filepath}[/cyan]: {e}")
+
+    # --- ANÁLISIS REGEX (Fallback/Complementario) ---
     # Patrones de riesgo comunes (Regex)
     RULES = [
         # --- CÓDIGO DINÁMICO Y OFUSCACIÓN ---

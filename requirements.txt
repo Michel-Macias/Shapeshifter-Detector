@@ -1,3 +1,4 @@
 rich
 streamlit
 pandas
+yara-python
