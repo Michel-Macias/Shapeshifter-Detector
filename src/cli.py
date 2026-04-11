@@ -182,13 +182,20 @@ def main():
         EXCLUDE_DIRS = {'.git', 'venv', '.venv', 'node_modules', '__pycache__', '.pytest_cache'}
         
         files_to_scan = []
-        for root, dirs, files in os.walk(args.path):
-            # Modificar dirs in-place para que os.walk no entre en ellos
-            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
-            
-            for file in files:
-                file_path = os.path.join(root, file)
-                files_to_scan.append(file_path)
+        count = 0
+        with console.status("[bold blue]Buscando archivos en el objetivo...[/bold blue]"):
+            for root, dirs, files in os.walk(args.path):
+                # Modificar dirs in-place para excluir carpetas pesadas
+                dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+                
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    files_to_scan.append(file_path)
+                    count += 1
+                    if count % 500 == 0:
+                        console.print(f"🔍 [dim]Descubiertos {count} archivos...[/dim]")
+        
+        console.print(f"✅ [bold green]Descubrimiento finalizado.[/bold green] Total: {len(files_to_scan)} archivos.")
         
         if not files_to_scan:
             logger.info("No se encontraron archivos validos para escanear.")
