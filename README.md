@@ -31,6 +31,11 @@ Capaz de detectar patrones de ataque complejos a velocidades concurrentes:
 - **Dashboard de Inteligencia:** Panel interactivo en `Streamlit` para visualizar correlaciones y dominios.
 - **Dictámenes Periciales:** Exportación de evidencias ejecutivas usando la bandera `--pdf` para resúmenes a gerencia.
 
+### 🏗️ Arquitectura e Infraestructura Corporativa
+- **Base de Datos SQLite (ACID):** El corazón de la memoria se ejecuta en C (SQLite) protegiendo la persistencia con *Locks* atómicos durante los escaneos asíncronos concurrentes. Exportación retrocompatible en caliente al clásico `memory.json`.
+- **Despliegues CI/CD:** Contamos con `Pytest` automatizando testeos de red en cada commit mediante el flujo continuo de `GitHub Actions`.
+- **Sandboxing Nativo:** Empaquetado `Dockerfile` incluido. Listo para escanear en aislamiento sin tocar la máquina local.
+
 ---
 
 ## 🚀 Guía de Arranque Rápido
@@ -79,9 +84,10 @@ python3 evaluate_agent.py
 
 ## 📁 Estructura del "Cerebro"
 - `src/core.py`: Motor de detección, firmas e IoCs.
-- `src/memory.py`: Sistema de persistencia y correlación.
-- `src/cli.py`: Interfaz de terminal y lógica de deduplicación.
-- `reports/memory.json`: La base de conocimientos viva del agente.
+- `src/memory.py`: Motor de BBDD transaccional `sqlite3` y correlación.
+- `src/cli.py`: Interfaz de terminal y lógica de multihilo asíncrono.
+- `Dockerfile`: Entorno Sandbox para virtualización operativa.
+- `tests/test_core.py`: Garantía de calidad mediante pruebas continuas.
 
 ---
 *Desarrollado para la ciberseguridad avanzada y análisis forense proactivo.*
