@@ -167,7 +167,8 @@ def main():
     
     args = parser.parse_args()
     
-    report_data = [] if (args.output or args.pdf) else None
+    # Siempre recolectamos datos para el reporte por defecto
+    report_data = []
     
     if os.path.isfile(args.path):
         scan_file(args.path, report_data)
@@ -213,26 +214,24 @@ def main():
     # Generar Marcas de Tiempo para reportes consistentes
     report_ts = datetime.now().strftime('%Y%m%d%H%M')
     
-    # 1. Guardar reporte JSON (Explícito o automático con PDF)
-    if (args.output or args.pdf) and report_data is not None:
-        try:
-            filename = args.output if args.output else f"Forensic_Data_{report_ts}.json"
-            output_path = filename
-            if not os.path.isabs(output_path):
-                os.makedirs('reports', exist_ok=True)
-                output_path = os.path.join('reports', filename)
+    # Siempre guardamos el reporte JSON por defecto
+    try:
+        filename = args.output if args.output else f"Forensic_Data_{report_ts}.json"
+        output_path = filename
+        if not os.path.isabs(output_path):
+            os.makedirs('reports', exist_ok=True)
+            output_path = os.path.join('reports', filename)
+        
+        with open(output_path, 'w') as f:
+            json.dump(report_data, f, indent=4)
+        logger.info(f"Reporte JSON generado en: [bold green]{output_path}[/bold green]")
+    except Exception as e:
+        logger.error(f"Error al guardar el reporte JSON default: {e}")
             
-            with open(output_path, 'w') as f:
-                json.dump(report_data, f, indent=4)
-            logger.info(f"Reporte JSON guardado en: [bold green]{output_path}[/bold green]")
-        except Exception as e:
-            logger.error(f"Error al guardar el reporte JSON: {e}")
-            
-    # 2. Guardar reporte PDF
-    if args.pdf and report_data is not None:
+    # Guardar reporte PDF opcional
+    if args.pdf:
         pdf_filename = os.path.join('reports', f"ExSys_Report_{report_ts}.pdf")
         generate_pdf_report(report_data, pdf_filename)
 
 if __name__ == "__main__":
     main()
-
