@@ -27,15 +27,24 @@ class AgentKnowledgeBase:
                 conn.execute("PRAGMA journal_mode=WAL")
                 conn.execute("PRAGMA synchronous=NORMAL")
                 cursor = conn.cursor()
+                
+                # Crear tabla base si no existe
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS analyses (
                         sha256 TEXT PRIMARY KEY,
                         filename TEXT,
                         threat_score REAL,
-                        cti_hits INTEGER,
                         timestamp TEXT
                     )
                 ''')
+                
+                # MIGRACIÓN: Comprobar si falta la columna cti_hits
+                cursor.execute("PRAGMA table_info(analyses)")
+                columns = [info[1] for info in cursor.fetchall()]
+                if 'cti_hits' not in columns:
+                    logger.info("Reparando esquema: Añadiendo columna 'cti_hits' a la tabla 'analyses'...")
+                    conn.execute("ALTER TABLE analyses ADD COLUMN cti_hits INTEGER DEFAULT 0")
+
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS global_iocs (
                         ioc_type TEXT,
