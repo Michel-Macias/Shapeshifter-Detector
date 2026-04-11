@@ -9,3 +9,5 @@ fpdf2
 streamlit-agraph
 streamlit-extras
 streamlit-lottie
+pytest
+pytest-cov
