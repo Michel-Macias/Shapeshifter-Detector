@@ -1,89 +1,70 @@
-# 🛡️ Shapeshifter-Detector Enterprise
-**Plataforma de Inteligencia Forense y Análisis Estático de Amenazas (SAST)**
+# 🛡️ SHAPESHIFTER-DETECTOR: ENTERPRISE FORENSIC ENGINE
+> **Asynchronous Static Analysis & Correlation Intelligence Platform**
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/Docker-Sandboxed-2496ED.svg)](#)
-[![Security](https://img.shields.io/badge/Paranoia-Max-red.svg)](#)
-[![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen.svg)](#)
+[![Engine](https://img.shields.io/badge/Engine-Asynchronous_Multithread-00f2fe.svg)](#)
+[![Security](https://img.shields.io/badge/Posture-Paranoia_Max-red.svg)](#)
+[![Infrastructure](https://img.shields.io/badge/Infra-Docker_&_CI--CD-brightgreen.svg)](#)
+[![CTI](https://img.shields.io/badge/Intel-VirusTotal_v3-blue.svg)](#)
 
-**Shapeshifter-Detector** no es solo un simple script de escaneo; es una **plataforma forense asíncrona de alto rendimiento** diseñada para equipos de SOC (Security Operations Center) y Sysadmins puristas. 
-
-Su motor escudriña el ADN binario de grandes volúmenes de archivos para desmantelar ataques de *Spoofing* (camuflaje de extensiones), detectar troyanos empaquetados e identificar Indicadores de Compromiso (IoCs cruzados) entre múltiples incidentes, todo sin depender en primera instancia de bases de datos de antivirus comerciales, sino del crudo análisis heurístico.
+**Shapeshifter-Detector** es un ecosistema de alta fidelidad diseñado para la **contrainteligencia forense**. A diferencia de los scanners tradicionales basados en firmas estáticas de terceros, nuestro motor opera mediante el análisis profundo del **DNA binario**, la reconstrucción heurística de cabeceras y la correlación atómica de IoCs en una base de conocimientos persistente.
 
 ---
 
-## ⚡ Capacidades Core
+## 💎 Valor Operativo (Hacked-Mindset)
 
-### 🧬 Motor Heurístico Híbrido
-- **Inspección de Firmas Binarias:** Destruye cualquier intento de camuflaje cruzando las extensiones lógicas contra los verdaderos *Magic Numbers* hexadecimales del archivo.
-- **Análisis de Cabeceras PE Profundo:** Utiliza la librería `pefile` para destripar la estructura de binarios Windows, detectando anomalías, funciones importadas sospechosas (*VirtualAllocEx*, *CreateRemoteThread*) y midiendo la **Entropía de secciones** (>7.5) para exponer tácticas de *Ransomware* y código empaquetado/ofuscado.
-- **Escaneo Concurrente:** Procesamiento asíncrono con `ThreadPoolExecutor`, destruyendo cientos de binarios en apenas segundos. 
+### 🚀 Motor de Ejecución Asíncrona
+Diseñado para el triage de incidentes masivos. Utiliza una arquitectura de **Hilos Concurrentes (ThreadPool)** que permite procesar repositorios enteros de malware en segundos, sin bloqueos y con mitigación de solapamiento gráfico en consola.
 
-### 🌐 Cyber Threat Intelligence Automatizada
-- Integración nativa con **VirusTotal (API v3)**. Una vez destripado el binario lógicamente, contrastamos sus hashes SHA-256 en tiempo real. 
-- Castigos heurísticos: Operamos en "Paranoia Máxima". Cualquier formato desconocido o discrepancia lanza las alarmas a nivel crítico. Todo positivo en redes CTI suma 100 puntos inmediatos al puntaje de amenaza.
+### 🧬 Análisis Heurístico de DNA Binario
+- **Desmitificación de Spoofing:** Validación cruzada de *Magic Numbers* contra extensiones lógicas. Si miente, el motor lo encadena.
+- **Deep PE dissection:** Análisis estructural de binarios Windows (`pefile`). Detecta **Entropía Crítica (>7.5)** típica de Ransomware y expone importaciones sospechosas de bajo nivel (*Hooking/Injection*).
 
-### 🧠 Inteligencia Forense Viva (Memoria ACID)
-- **Base de Datos SQLite Tolerante a Fallos:** Despídete de los archivos huérfanos. La memoria histórica del agente (conocimiento acumulativo de escaneos) reside en un motor transaccional en `C` altamente escalable.
-- **Correlación de Redes (Grafos 3D):** Identifica cuando un actor malicioso usa la misma IP en tres binarios diferentes, construyendo modelos matemáticos para predecir tácticas.
+### 🧠 Memoria Correlacional (Persistent Knowledge)
+No es un escáner efímero. Cada análisis alimenta un **Knowledge Base transaccional (SQLite/ACID)**. 
+- El sistema detecta cuando una IP maliciosa o un dominio visto en un incidente previo reaparece en una nueva muestra.
+- **Visualización 3D de Amenazas:** Genera grafos interactivos de correlación para mapear la infraestructura del atacante.
 
-### 📊 Visibilidad Ejecutiva
-- **Consola Hacker-Style:** Monitorización limpia CLI mediante librerías `Rich`.
-- **Informes PDF Automatizados:** Si lanzas el comando con la flag `--pdf`, el motor vomita el dictamen sumariado en un formato formal e imprimible.
-- **Centro de Control Streamlit:** Dashboard web robusto con visualizaciones *Dark-Cyber* interactivas, animaciones reactivas y mapeos de Grafos interactivos de las amenazas.
+### 🌐 Vigilancia CTI (VirusTotal v3)
+Enriquecimiento de evidencias mediante integración nativa con redes de inteligencia externa. Valida el veredicto heurístico con la autoridad global de VirusTotal de forma automatizada.
 
 ---
 
-## 🛠️ Arquitectura y Despliegue CI/CD
+## 🏗️ Infraestructura de Grado Producción
 
-Integramos filosofía Zero-Trust. El proyecto es auditado por `GitHub Actions` disparando la suite `pytest` (`tests/test_core.py`) en cada Pull Request para asegurar que el core de validación entrópica nunca sea alterado.
-
-Contamos con una base `Dockerfile` oficial para aislar el escáner del sistema de archivos *Host*, evitando riesgos severos al detonar entornos de malware activo.
+- **Sandboxing Nativo:** Implementación de `Dockerfile` para la detonación y análisis en entornos aislados, protegiendo la integridad del Host.
+- **Ciclo de Vida CI/CD:** Pipeline automatizado en GitHub Actions. Cada línea de código es auditada mediante pruebas de regresión y validación de seguridad (`pytest`).
+- **Dictámenes Ejecutivos:** Generación automatizada de reportes **PDF Forenses** mediante la bandera `--pdf`, listos para ser presentados como evidencias periciales o reportes a gerencia.
 
 ---
 
-## 🚀 Guía Rápida de Despliegue
+## ⚡ Guía de Despliegue Táctico
 
-### 1. Instalación Standard (Entorno Nativo)
-
-```bash
-git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
-cd Shapeshifter-Detector
-
-# Aislar dependencias (Evitar PEP-668 del OS base)
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# (Opcional) Renombra el .env.example a .env y añade tus claves de Cyber-Inteligencia.
-```
-
-### 2. Sandbox Mode (Docker)
-Altamente recomendado si vas a escanear carpetas reales extraídas de incidentes corporativos:
+### A. Ejecución en Sandbox (Recomendado)
 ```bash
 docker build -t shapeshifter-engine .
-docker run --rm -v /ruta/archivos/infectados:/target shapeshifter-engine /target
+docker run --rm -v $(pwd)/samples:/app/target shapeshifter-engine /app/target --pdf
+```
+
+### B. Instalación Manual
+```bash
+# Clonar y blindar entorno
+git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git && cd Shapeshifter-Detector
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ---
 
-## 💻 Control Operativo
+## 🕹️ Control de Misión
 
-### A. Escáner de Terminal (CLI)
-Escanea de forma salvaje y genera directamente el PDF pericial.
-
-```bash
-# Analiza todo tu entorno de Descargas de un plumazo
-python3 main.py /home/user/Downloads --output mi_reporte.json --pdf
-```
-
-### B. Módulo Gráfico SOC (Dashboard)
-Arranca el radar web y conecta tu inteligencia visual. Sube tu `.json` autogenerado y observa los mapas de relaciones en formato Grafo 3D.
-
-```bash
-streamlit run dashboard.py
-```
+| Comando | Descripción |
+| :--- | :--- |
+| `python3 main.py <ruta>` | Inicia el escaneo asíncrono profundo. |
+| `python3 main.py <ruta> --pdf` | Escanea y genera Dictamen Pericial en PDF. |
+| `streamlit run dashboard.py` | Lanza el Centro de Control Visual (Correlaciones & Grafos). |
+| `pytest tests/` | Ejecuta la auditoría de integridad del motor. |
 
 ---
 
-*Prototipado por Nex-OS | Diseñado para la investigación forense agresiva y proactiva.*
+> **PROYECTO AUDITADO POR NEX-OS**  
+> *"En la guerra por la información, el anonimato es el arma, pero la heurística es el escudo."*
