@@ -39,25 +39,31 @@ Enriquecimiento de evidencias mediante integración nativa con redes de intelige
 
 ## ⚡ Guía de Despliegue Táctico
 
-### A. Ejecución en Sandbox (Docker)
-Ideal para auditar carpetas sospechosas sin riesgo de ejecución accidental en el host. El Sysadmin solo tiene que "apuntar" el volumen a la ruta que desea auditar:
+### A. Auditoría Rápida con Docker (Test de Humo)
+Para verificar que el motor funciona, lánzalo contra tu directorio actual. Analizará los archivos del repositorio y generará un reporte PDF instantáneo:
 
 ```bash
-# Formato: -v /RUTA/QUE/QUIERES/AUDITAR:/app/target
+# 1. Construir el motor
+docker build -t shapeshifter-engine .
+
+# 2. Analizar el directorio actual (donde estás ahora)
 docker run --rm \
-  -v /var/www/html/uploads:/app/target \
+  -v $(pwd):/app/target \
   -v $(pwd)/reports:/app/reports \
   shapeshifter-engine /app/target --pdf
 ```
-*En este ejemplo, el motor escanea la carpeta de subidas de un servidor web directamente, guardando el PDF resultante en tu directorio actual.*
+*Esto mapea tu ubicación actual al motor. Verás la barra de progreso y se creará un Dictamen PDF en `./reports/`.*
 
 ---
 
-## 💻 Ejecución Nativa (Velocidad Total)
-Si no necesitas aislamiento y prefieres la máxima velocidad apuntando a rutas del sistema:
+## 🛠️ Uso Forense Avanzado (Sysadmin)
+Si necesitas auditar una ruta específica del servidor sin mover archivos:
 
 ```bash
-python3 main.py /ruta/log/linux --pdf --output reporte_infra.json
+docker run --rm \
+  -v /RUTA/DEL/INCIDENTE:/app/target \
+  -v $(pwd)/reports:/app/reports \
+  shapeshifter-engine /app/target --pdf
 ```
 
 ---
