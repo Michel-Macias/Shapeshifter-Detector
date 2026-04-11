@@ -30,6 +30,7 @@ class AgentKnowledgeBase:
                         sha256 TEXT PRIMARY KEY,
                         filename TEXT,
                         threat_score REAL,
+                        cti_hits INTEGER,
                         timestamp TEXT
                     )
                 ''')
@@ -47,24 +48,30 @@ class AgentKnowledgeBase:
         with self.lock:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("SELECT filename, threat_score FROM analyses WHERE sha256 = ?", (sha256,))
+                cursor.execute("SELECT filename, threat_score, cti_hits, timestamp FROM analyses WHERE sha256 = ?", (sha256,))
                 row = cursor.fetchone()
                 if row:
-                    return {"filename": row[0], "threat_score": row[1]}
+                    return {
+                        "filename": row[0], 
+                        "threat_score": row[1], 
+                        "cti_hits": row[2],
+                        "timestamp": row[3]
+                    }
         return None
 
     def learn_analysis(self, sha256, filepath, results):
         filename = os.path.basename(filepath)
         score = results.get("threat_score", 0)
         timestamp = results.get("timestamp", "")
+        cti_hits = results.get("cti_hits", 0)
         
         with self.lock:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
-                    INSERT OR REPLACE INTO analyses (sha256, filename, threat_score, timestamp)
-                    VALUES (?, ?, ?, ?)
-                ''', (sha256, filename, score, timestamp))
+                    INSERT OR REPLACE INTO analyses (sha256, filename, threat_score, cti_hits, timestamp)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', (sha256, filename, score, cti_hits, timestamp))
                 
                 if "iocs" in results:
                     for ioc_type, items in results["iocs"].items():
@@ -97,10 +104,15 @@ class AgentKnowledgeBase:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 
-                cursor.execute("SELECT sha256, filename, threat_score, timestamp FROM analyses")
+                cursor.execute("SELECT sha256, filename, threat_score, cti_hits, timestamp FROM analyses")
                 analyses_dict = {}
                 for row in cursor.fetchall():
-                    analyses_dict[row[0]] = {"filename": row[1], "threat_score": row[2], "timestamp": row[3]}
+                    analyses_dict[row[0]] = {
+                        "filename": row[1], 
+                        "threat_score": row[2], 
+                        "cti_hits": row[3],
+                        "timestamp": row[4]
+                    }
                 
                 cursor.execute("SELECT ioc_type, ioc_value, sha256 FROM global_iocs")
                 iocs_dict = {}

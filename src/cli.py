@@ -53,104 +53,90 @@ def scan_file(filepath, report_list=None):
     
     sha256 = hashes['sha256']
     
-    # 2. Consultar Memoria (Deduplicación)
+    # 2. Consultar Memoria (Deduplicación Agresiva)
     previous_analysis = memory.get_analysis(sha256)
     if previous_analysis:
-        console.print(Panel(
-            f"🧠 [bold cyan]Agente:[/bold cyan] Ya analicé este archivo anteriormente.\n"
-            f"📅 [dim]Fecha:[/dim] {previous_analysis.get('timestamp')}\n"
-            f"📊 [dim]Resultado:[/dim] {previous_analysis.get('filename')}",
-            title="[bold blue]Conocimiento Previo[/bold blue]", border_style="cyan"
-        ))
+        # Si ya lo conocemos, recuperamos el CTI hits previo para el reporte
+        cti_malicious = previous_analysis.get("cti_hits", 0)
+        cti_data = {"malicious_hits": cti_malicious, "cached": True} if cti_malicious is not None else None
+    else:
+        cti_data = None
 
-    # 3. Análisis Forense Completo
+    # 3. Análisis Forense Local
     signature = get_file_signature(filepath)
     type_info = identify_type(signature)
     entropy = calculate_entropy(filepath)
     strings = extract_strings(filepath)
     iocs = identify_iocs(strings)
     vulnerabilities = analyze_vulnerabilities(filepath)
-    vulnerabilities.extend(analyze_pe_headers(filepath)) # Añadimos detección PE
-    
-    # Integración CTI (VirusTotal)
-    cti_data = cti_engine.check_hash_vt(sha256)
-    
-    # Buscar correlaciones en la memoria global
-    correlations = memory.find_correlations(iocs)
+    vulnerabilities.extend(analyze_pe_headers(filepath)) 
     
     file_type = type_info['type'] if type_info else "Desconocido"
     is_mismatch = check_mismatch(filepath, type_info)
     
-    # Calcular un "Threat Score" simple para la memoria (MODO PARANOIA MAXIMA)
-    threat_score = 0
-    if is_mismatch: threat_score += 85
-    if not type_info: threat_score += 65 # Alto riesgo si es desconocido
-    if entropy > 7.5: threat_score += 25
-    if vulnerabilities: threat_score += 35
+    # Evaluación de Riesgo Local (Determinista)
+    local_threat_score = 0
+    if is_mismatch: local_threat_score += 85
+    if not type_info: local_threat_score += 65
+    if entropy > 7.5: local_threat_score += 25
+    if vulnerabilities: local_threat_score += 35
+    
+    # 4. Inteligencia Selectiva (CTI)
+    # Solo consultamos VT si:
+    # - NO lo tenemos en caché
+    # - El riesgo local es alto (>50) O es un ejecutable/script de riesgo
+    # - El usuario no ha detenido el escaneo
+    should_query_vt = (
+        not previous_analysis and 
+        (local_threat_score > 50 or file_type in ["Windows Executable", "Ejecutable ELF (Linux)", "Script (Shebang)"])
+    )
+
+    if should_query_vt:
+        cti_data = cti_engine.check_hash_vt(sha256)
+    
+    # Buscar correlaciones en la memoria global
+    correlations = memory.find_correlations(iocs)
+    
+    # Calcular Threat Score Final
+    threat_score = local_threat_score
     if correlations: threat_score += 15 * len(correlations)
-    
     if cti_data and cti_data.get("malicious_hits", 0) > 0:
-        threat_score += 100  # Máximo castigo por detección confirmada en VT
+        threat_score += 100 
 
-    # Crear tabla de resultados
-    table = Table(title=f"Análisis: {os.path.basename(filepath)}", show_header=False, box=None)
-    table.add_row("Ruta", filepath)
-    table.add_row("Firma Hex", signature)
-    
-    type_style = "bold green" if type_info else "bold yellow"
-    table.add_row("Tipo Detectado", Text(file_type, style=type_style))
-    
-    if hashes:
-        table.add_row("MD5", hashes['md5'])
-        table.add_row("SHA256", hashes['sha256'])
-    
-    entropy_style = "bold red" if entropy > 7.5 else "green"
-    table.add_row("Entropía", Text(f"{entropy:.2f}", style=entropy_style))
-    
-    # Mostrar IoCs detectados
-    if iocs:
-        ioc_summary = []
-        for ioc_type, items in iocs.items():
-            ioc_summary.append(f"{ioc_type.upper()}: {len(items)}")
-        table.add_row("IoCs Detectados", ", ".join(ioc_summary))
-
-    # Mostrar tabla estructurada evitando superposición de Hilos
+    # --- RENDERIZADO DE RESULTADOS ---
+    # Mostramos resultados solo si es el primer análisis o hay algo digno de mención
     with print_lock:
-        console.print(Panel(table, title="[bold blue]Resultados del Escaneo[/bold blue]", border_style="blue"))
-
-        # Alertas y Correlaciones
-        if correlations:
-            c_text = Text("🧠 Correlaciones Detectadas:\n", style="bold cyan")
-            for item, hashes_list in correlations.items():
-                c_text.append(f"  • {item} ", style="white")
-                c_text.append(f"(visto en {len(hashes_list)} archivos previos)\n", style="dim")
-            console.print(Panel(c_text, title="[bold cyan]Memoria del Agente[/bold cyan]", border_style="cyan"))
-
-        if entropy > 7.5:
-            console.print(Panel("[bold yellow]! ADVERTENCIA: Entropía muy alta (>7.5). Posible archivo cifrado o empaquetado.[/bold yellow]", border_style="yellow"))
-        
-        if is_mismatch or not type_info:
-            console.print(Panel("[bold red]! ALERTA CRÍTICA: Discrepancia o Formato Desconocido (Modo Paranoia Sysadmin).[/bold red]", border_style="red"))
+        if previous_analysis:
+            console.print(f"🧠 [dim]Hash conocido recuperado de memoria:[/dim] [cyan]{os.path.basename(filepath)}[/cyan]")
+        else:
+            table = Table(title=f"Análisis: {os.path.basename(filepath)}", show_header=False, box=None)
+            table.add_row("Ruta", filepath)
+            table.add_row("Tipo", Text(file_type, style="bold green" if type_info else "bold yellow"))
+            table.add_row("Entropía", Text(f"{entropy:.2f}", style="bold red" if entropy > 7.5 else "green"))
             
-        if cti_data and cti_data.get("malicious_hits", 0) > 0:
-            console.print(Panel(f"[bold red]☠️ PELIGRO: VirusTotal (CTI) reporta {cti_data['malicious_hits']} detecciones positivas para este hash.[/bold red]", border_style="red"))
-        
-        # Mostrar vulnerabilidades
-        if vulnerabilities:
-            v_table = Table(title="[bold red]Hallazgos de Seguridad (SAST y PE)[/bold red]", show_header=True, box=None)
-            v_table.add_column("Línea / Cabecera", style="cyan")
-            v_table.add_column("Riesgo", style="bold red")
-            v_table.add_column("Detección")
+            if iocs:
+                ioc_summary = [f"{k.upper()}: {len(v)}" for k, v in iocs.items()]
+                table.add_row("IoCs", ", ".join(ioc_summary))
+
+            console.print(Panel(table, title="[bold blue]Nuevo Hallazgo[/bold blue]", border_style="blue"))
+
+            # Alertas Críticas
+            if correlations:
+                console.print(f"🔗 [bold cyan]Correlación:[/bold cyan] Visto en otros {len(next(iter(correlations.values())))} archivos.")
+            if is_mismatch:
+                console.print(Panel("[bold red]! ALERTA: Spoofing detectado (Mismatch firma/extensión).[/bold red]", border_style="red"))
+            if cti_data and cti_data.get("malicious_hits", 0) > 0:
+                console.print(Panel(f"☠️ [bold red]VirusTotal:[/bold red] {cti_data['malicious_hits']} detecciones positivas.", border_style="red"))
             
-            for v in vulnerabilities[:5]: 
-                v_table.add_row(str(v['line']), v['severity'], v['rule'])
-                
-            console.print(Panel(v_table, border_style="red"))
+            if vulnerabilities:
+                v_sum = ", ".join([v['rule'] for v in vulnerabilities[:3]])
+                console.print(f"⚠️ [bold red]SAST:[/bold red] {v_sum}")
 
     # 4. Guardar en Memoria (Aprender)
     memory_results = {
         "timestamp": datetime.now().isoformat(),
         "threat_score": threat_score,
+        "cti_hits": cti_data.get("malicious_hits", 0) if cti_data else 0,
         "findings": [v['rule'] for v in vulnerabilities],
         "iocs": iocs
     }
