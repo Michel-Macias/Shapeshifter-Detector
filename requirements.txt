@@ -2,3 +2,7 @@ rich
 streamlit
 pandas
 yara-python
+pefile
+python-dotenv
+requests
+fpdf2

@@ -1,35 +1,13 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Environments
-.env
-.venv
-env/
+# Entorno Virtual Python
 venv/
-ENV/
-env.bak/
-venv.bak/
+env/
+.venv/
 
-# Distribution / Packaging
-dist/
-build/
-*.egg-info/
+# Cripto / Credentials
+.env
+*.env
 
-# Streamlit
-.streamlit/
-
-# Project specific
-reporte_*.json
-reporte.json
-temp_test_file.txt
-fake_doc.pdf
-test_image.png
-test_doc.pdf
-test_unknown.xyz
-*.log
-
-# IDEs
-.vscode/
-.idea/
+# Carpetas de datos locales
+reports/
+__pycache__/
+*.pyc

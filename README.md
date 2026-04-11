@@ -16,15 +16,20 @@ El agente no analiza en el vacío. Cada vez que encuentra una **IP, URL o Domini
 - **Correlación Cruzada:** Si una IP maliciosa aparece en dos archivos diferentes, el agente te alertará del vínculo.
 - **Deduplicación:** Evita el re-análisis innecesario de archivos ya conocidos mediante hashing SHA256.
 
-### 🛡️ Motor SAST de Grado Forense
-Capaz de detectar patrones de ataque complejos en tiempo real:
+### 🛡️ Motor SAST de Grado Forense (Multi-Hilo)
+Capaz de detectar patrones de ataque complejos a velocidades concurrentes:
 - **Ransomware:** Borrado de Shadow Copies (`vssadmin`), cifrado masivo.
 - **Troyanos & Persistencia:** Modificaciones en el registro de Windows (`RunKeys`), inyección de DLLs.
-- **Spoofing de Extensión:** Detecta discrepancias entre el contenido binario real y la extensión del archivo.
+- **Spoofing de Extensión:** Detecta discrepancias entre el contenido binario real y su magia hexadecimal.
+- **Heurística de Compilados:** Escaneo de cabeceras de SO (`pefile`) descubriendo secciones con alta entropía (Ofuscación/Packers).
+
+### 🌐 Cyber Threat Intelligence (CTI)
+- **VirusTotal Integrado:** Contrastación nativa de cualquier Hash sospechoso para certificar el veredicto en tiempo real con 100 puntos extra de "Paranoia".
 
 ### 📊 Observabilidad Total
-- **CLI Hacker-Style:** Interfaz enriquecida con `Rich`, alertas visuales y barras de progreso.
-- **Dashboard de Inteligencia:** Panel interactivo en `Streamlit` para visualizar la red de correlaciones y métricas globales.
+- **CLI Hacker-Style:** Interfaz asíncrona enriquecida con `Rich`, barras en paralelo y mitigación de solapamiento gráfico.
+- **Dashboard de Inteligencia:** Panel interactivo en `Streamlit` para visualizar correlaciones y dominios.
+- **Dictámenes Periciales:** Exportación de evidencias ejecutivas usando la bandera `--pdf` para resúmenes a gerencia.
 
 ---
 
@@ -34,21 +39,25 @@ Capaz de detectar patrones de ataque complejos en tiempo real:
 ```bash
 # Clonar y acceder
 git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
-cd Identify-files
+cd Shapeshifter-Detector
+
+# Crear y activar entorno virtual (Recomendado para evitar PEP 668)
+python3 -m venv venv
+source venv/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
 ```
 
 ### 2. Uso del Agente (CLI)
-Analiza archivos individuales o directorios enteros. El agente aprenderá de cada escaneo.
+Analiza archivos individuales o directorios enteros. El motor paralelo asimilará cada escaneo a velocidades altas.
 
 ```bash
-# Escanear un archivo (ej: detectar spoofing o malware)
+# Escanear un archivo base de prueba
 python3 main.py ruta/al/archivo.exe
 
-# Escaneo masivo de un directorio con generación de reporte
-python3 main.py /descargas --output mi_reporte.json
+# Escaneo masivo con extracción de evidencias y dictamen PDF
+python3 main.py /descargas --output reporte.json --pdf
 ```
 
 ### 3. Visualización de Inteligencia (Dashboard)

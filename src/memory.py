@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 from src.logger import logger
 
 # Ruta por defecto para la base de conocimientos
@@ -13,6 +14,7 @@ class AgentKnowledgeBase:
     def __init__(self, memory_path=MEMORY_PATH):
         self.memory_path = memory_path
         self.data = self._load_memory()
+        self.lock = threading.Lock()
 
     def _load_memory(self):
         """Carga la base de conocimientos desde el archivo JSON."""
@@ -26,24 +28,27 @@ class AgentKnowledgeBase:
         return {"analyses": {}, "global_iocs": {}}
 
     def save_memory(self):
-        """Guarda el estado actual en el disco."""
-        try:
-            os.makedirs(os.path.dirname(self.memory_path), exist_ok=True)
-            with open(self.memory_path, 'w', encoding='utf-8') as f:
-                json.dump(self.data, f, indent=4)
-        except IOError as e:
-            logger.error(f"No se pudo persistir la memoria: {e}")
+        """Guarda el estado actual en el disco de forma Thread-Safe."""
+        with self.lock:
+            try:
+                os.makedirs(os.path.dirname(self.memory_path), exist_ok=True)
+                with open(self.memory_path, 'w', encoding='utf-8') as f:
+                    json.dump(self.data, f, indent=4)
+            except IOError as e:
+                logger.error(f"No se pudo persistir la memoria: {e}")
 
     def get_analysis(self, sha256):
         """Recupera un análisis previo si existe."""
-        return self.data["analyses"].get(sha256)
+        with self.lock:
+            return self.data["analyses"].get(sha256)
 
     def learn_analysis(self, sha256, filepath, results):
         """
-        Registra un nuevo análisis y actualiza la lista global de IoCs (Indicadores de Compromiso).
+        Registra un nuevo análisis y actualiza la lista global de IoCs de forma segura.
         """
-        # Guardar análisis individual
-        self.data["analyses"][sha256] = {
+        with self.lock:
+            # Guardar análisis individual
+            self.data["analyses"][sha256] = {
             "filename": os.path.basename(filepath),
             "timestamp": results.get("timestamp"),
             "threat_score": results.get("threat_score", 0),

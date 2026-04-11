@@ -1,7 +1,9 @@
 import argparse
 import os
 import json
+import threading
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -9,12 +11,17 @@ from rich.text import Text
 from rich.progress import track
 from src.core import (
     get_file_signature, identify_type, calculate_hashes, 
-    calculate_entropy, extract_strings, identify_iocs, analyze_vulnerabilities
+    calculate_entropy, extract_strings, identify_iocs, analyze_vulnerabilities,
+    analyze_pe_headers
 )
 from src.memory import memory
 from src.logger import logger
+from src.cti_integration import CTI_Engine
+from src.report_generator import generate_pdf_report
 
 console = Console()
+print_lock = threading.Lock()
+cti_engine = CTI_Engine()
 
 def check_mismatch(filepath, detected_type_info):
     """
@@ -63,6 +70,10 @@ def scan_file(filepath, report_list=None):
     strings = extract_strings(filepath)
     iocs = identify_iocs(strings)
     vulnerabilities = analyze_vulnerabilities(filepath)
+    vulnerabilities.extend(analyze_pe_headers(filepath)) # Añadimos detección PE
+    
+    # Integración CTI (VirusTotal)
+    cti_data = cti_engine.check_hash_vt(sha256)
     
     # Buscar correlaciones en la memoria global
     correlations = memory.find_correlations(iocs)
@@ -70,12 +81,16 @@ def scan_file(filepath, report_list=None):
     file_type = type_info['type'] if type_info else "Desconocido"
     is_mismatch = check_mismatch(filepath, type_info)
     
-    # Calcular un "Threat Score" simple para la memoria
+    # Calcular un "Threat Score" simple para la memoria (MODO PARANOIA MAXIMA)
     threat_score = 0
-    if is_mismatch: threat_score += 50
-    if entropy > 7.5: threat_score += 20
-    if vulnerabilities: threat_score += 30
-    if correlations: threat_score += 10 * len(correlations)
+    if is_mismatch: threat_score += 85
+    if not type_info: threat_score += 65 # Alto riesgo si es desconocido
+    if entropy > 7.5: threat_score += 25
+    if vulnerabilities: threat_score += 35
+    if correlations: threat_score += 15 * len(correlations)
+    
+    if cti_data and cti_data.get("malicious_hits", 0) > 0:
+        threat_score += 100  # Máximo castigo por detección confirmada en VT
 
     # Crear tabla de resultados
     table = Table(title=f"Análisis: {os.path.basename(filepath)}", show_header=False, box=None)
@@ -99,34 +114,38 @@ def scan_file(filepath, report_list=None):
             ioc_summary.append(f"{ioc_type.upper()}: {len(items)}")
         table.add_row("IoCs Detectados", ", ".join(ioc_summary))
 
-    # Mostrar tabla
-    console.print(Panel(table, title="[bold blue]Resultados del Escaneo[/bold blue]", border_style="blue"))
+    # Mostrar tabla estructurada evitando superposición de Hilos
+    with print_lock:
+        console.print(Panel(table, title="[bold blue]Resultados del Escaneo[/bold blue]", border_style="blue"))
 
-    # Alertas y Correlaciones
-    if correlations:
-        c_text = Text("🧠 Correlaciones Detectadas:\n", style="bold cyan")
-        for item, hashes_list in correlations.items():
-            c_text.append(f"  • {item} ", style="white")
-            c_text.append(f"(visto en {len(hashes_list)} archivos previos)\n", style="dim")
-        console.print(Panel(c_text, title="[bold cyan]Memoria del Agente[/bold cyan]", border_style="cyan"))
+        # Alertas y Correlaciones
+        if correlations:
+            c_text = Text("🧠 Correlaciones Detectadas:\n", style="bold cyan")
+            for item, hashes_list in correlations.items():
+                c_text.append(f"  • {item} ", style="white")
+                c_text.append(f"(visto en {len(hashes_list)} archivos previos)\n", style="dim")
+            console.print(Panel(c_text, title="[bold cyan]Memoria del Agente[/bold cyan]", border_style="cyan"))
 
-    if entropy > 7.5:
-        console.print(Panel("[bold yellow]! ADVERTENCIA: Entropía muy alta (>7.5). Posible archivo cifrado o empaquetado.[/bold yellow]", border_style="yellow"))
-    
-    if is_mismatch:
-        console.print(Panel("[bold red]! ALERTA CRÍTICA: La extensión no coincide con el tipo real. Posible intento de Spoofing.[/bold red]", border_style="red"))
-    
-    # Mostrar vulnerabilidades
-    if vulnerabilities:
-        v_table = Table(title="[bold red]Hallazgos de Seguridad (SAST)[/bold red]", show_header=True, box=None)
-        v_table.add_column("Línea", style="cyan")
-        v_table.add_column("Riesgo", style="bold red")
-        v_table.add_column("Detección")
+        if entropy > 7.5:
+            console.print(Panel("[bold yellow]! ADVERTENCIA: Entropía muy alta (>7.5). Posible archivo cifrado o empaquetado.[/bold yellow]", border_style="yellow"))
         
-        for v in vulnerabilities[:5]: 
-            v_table.add_row(str(v['line']), v['severity'], v['rule'])
+        if is_mismatch or not type_info:
+            console.print(Panel("[bold red]! ALERTA CRÍTICA: Discrepancia o Formato Desconocido (Modo Paranoia Sysadmin).[/bold red]", border_style="red"))
             
-        console.print(Panel(v_table, border_style="red"))
+        if cti_data and cti_data.get("malicious_hits", 0) > 0:
+            console.print(Panel(f"[bold red]☠️ PELIGRO: VirusTotal (CTI) reporta {cti_data['malicious_hits']} detecciones positivas para este hash.[/bold red]", border_style="red"))
+        
+        # Mostrar vulnerabilidades
+        if vulnerabilities:
+            v_table = Table(title="[bold red]Hallazgos de Seguridad (SAST y PE)[/bold red]", show_header=True, box=None)
+            v_table.add_column("Línea / Cabecera", style="cyan")
+            v_table.add_column("Riesgo", style="bold red")
+            v_table.add_column("Detección")
+            
+            for v in vulnerabilities[:5]: 
+                v_table.add_row(str(v['line']), v['severity'], v['rule'])
+                
+            console.print(Panel(v_table, border_style="red"))
 
     # 4. Guardar en Memoria (Aprender)
     memory_results = {
@@ -137,7 +156,8 @@ def scan_file(filepath, report_list=None):
     }
     memory.learn_analysis(sha256, filepath, memory_results)
     
-    console.print("-" * 40)
+    with print_lock:
+        console.print("-" * 40)
     
     # Añadir al reporte
     if report_list is not None:
@@ -150,7 +170,9 @@ def scan_file(filepath, report_list=None):
             "entropy": entropy,
             "iocs": iocs,
             "correlations": correlations,
-            "vulnerabilities": vulnerabilities
+            "vulnerabilities": vulnerabilities,
+            "cti_data": cti_data,
+            "threat_score": threat_score
         }
         report_list.append(report_entry)
 
@@ -158,11 +180,12 @@ def scan_file(filepath, report_list=None):
 def main():
     parser = argparse.ArgumentParser(description="Identifica tipos de archivos usando números mágicos y detecta spoofing.")
     parser.add_argument("path", help="Ruta al archivo o directorio a escanear")
-    parser.add_argument("--output", help="Ruta para guardar el reporte en formato JSON", default=None)
+    parser.add_argument("--output", help="Ruta para guardar el reporte en JSON", default=None)
+    parser.add_argument("--pdf", action="store_true", help="Generar dictamen ejecutivo en PDF automáticamente")
     
     args = parser.parse_args()
     
-    report_data = [] if args.output else None
+    report_data = [] if (args.output or args.pdf) else None
     
     if os.path.isfile(args.path):
         scan_file(args.path, report_data)
@@ -173,9 +196,12 @@ def main():
             for file in files:
                 files_to_scan.append(os.path.join(root, file))
         
-        # Barra de progreso para directorios
-        for filepath in track(files_to_scan, description="Procesando archivos..."):
-            scan_file(filepath, report_data)
+        # Barra de progreso para directorios con ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
+            futures = [executor.submit(scan_file, fp, report_data) for fp in files_to_scan]
+            
+            for _ in track(as_completed(futures), total=len(files_to_scan), description="Procesando archivos (Multi-hilo)..."):
+                pass
             
     else:
         logger.error(f"La ruta '[bold red]{args.path}[/bold red]' no existe.")
@@ -191,9 +217,12 @@ def main():
             
             with open(output_path, 'w') as f:
                 json.dump(report_data, f, indent=4)
-            logger.info(f"Reporte guardado exitosamente en: [bold green]{output_path}[/bold green]")
+            logger.info(f"Reporte JSON guardado exitosamente en: [bold green]{output_path}[/bold green]")
         except Exception as e:
-            logger.error(f"Error al guardar el reporte: {e}")
+            logger.error(f"Error al guardar el reporte JSON: {e}")
+            
+    if args.pdf and report_data is not None:
+        generate_pdf_report(report_data)
 
 if __name__ == "__main__":
     main()
