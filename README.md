@@ -1,93 +1,89 @@
-# 🛡️ Identify-Files (Shapeshifter-Detector)
-## *Agente de Inteligencia Forense con Memoria y Detección de Amenazas Activa*
+# 🛡️ Shapeshifter-Detector Enterprise
+**Plataforma de Inteligencia Forense y Análisis Estático de Amenazas (SAST)**
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Accuracy](https://img.shields.io/badge/Agent_Accuracy-100%25-brightgreen.svg)](#)
-[![Security SAST](https://img.shields.io/badge/Security-Advanced_SAST-red.svg)](#)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/Docker-Sandboxed-2496ED.svg)](#)
+[![Security](https://img.shields.io/badge/Paranoia-Max-red.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen.svg)](#)
 
-**Identify-Files** es un agente forense avanzado diseñado para la detección de amenazas mediante el análisis de **firmas digitales binarias** (Magic Numbers) y **análisis estático profundo (SAST)**. A diferencia de las herramientas tradicionales, este agente posee **Memoria Persistente**, lo que le permite correlacionar Indicadores de Compromiso (IoCs) entre diferentes sesiones de análisis.
+**Shapeshifter-Detector** no es solo un simple script de escaneo; es una **plataforma forense asíncrona de alto rendimiento** diseñada para equipos de SOC (Security Operations Center) y Sysadmins puristas. 
 
----
-
-## ✨ Características de Élite
-
-### 🧠 Memoria del Agente (Knowledge Base)
-El agente no analiza en el vacío. Cada vez que encuentra una **IP, URL o Dominio**, lo registra en su base de conocimientos (`memory.json`). 
-- **Correlación Cruzada:** Si una IP maliciosa aparece en dos archivos diferentes, el agente te alertará del vínculo.
-- **Deduplicación:** Evita el re-análisis innecesario de archivos ya conocidos mediante hashing SHA256.
-
-### 🛡️ Motor SAST de Grado Forense (Multi-Hilo)
-Capaz de detectar patrones de ataque complejos a velocidades concurrentes:
-- **Ransomware:** Borrado de Shadow Copies (`vssadmin`), cifrado masivo.
-- **Troyanos & Persistencia:** Modificaciones en el registro de Windows (`RunKeys`), inyección de DLLs.
-- **Spoofing de Extensión:** Detecta discrepancias entre el contenido binario real y su magia hexadecimal.
-- **Heurística de Compilados:** Escaneo de cabeceras de SO (`pefile`) descubriendo secciones con alta entropía (Ofuscación/Packers).
-
-### 🌐 Cyber Threat Intelligence (CTI)
-- **VirusTotal Integrado:** Contrastación nativa de cualquier Hash sospechoso para certificar el veredicto en tiempo real con 100 puntos extra de "Paranoia".
-
-### 📊 Observabilidad Total
-- **CLI Hacker-Style:** Interfaz asíncrona enriquecida con `Rich`, barras en paralelo y mitigación de solapamiento gráfico.
-- **Dashboard de Inteligencia:** Panel interactivo en `Streamlit` para visualizar correlaciones y dominios.
-- **Dictámenes Periciales:** Exportación de evidencias ejecutivas usando la bandera `--pdf` para resúmenes a gerencia.
-
-### 🏗️ Arquitectura e Infraestructura Corporativa
-- **Base de Datos SQLite (ACID):** El corazón de la memoria se ejecuta en C (SQLite) protegiendo la persistencia con *Locks* atómicos durante los escaneos asíncronos concurrentes. Exportación retrocompatible en caliente al clásico `memory.json`.
-- **Despliegues CI/CD:** Contamos con `Pytest` automatizando testeos de red en cada commit mediante el flujo continuo de `GitHub Actions`.
-- **Sandboxing Nativo:** Empaquetado `Dockerfile` incluido. Listo para escanear en aislamiento sin tocar la máquina local.
+Su motor escudriña el ADN binario de grandes volúmenes de archivos para desmantelar ataques de *Spoofing* (camuflaje de extensiones), detectar troyanos empaquetados e identificar Indicadores de Compromiso (IoCs cruzados) entre múltiples incidentes, todo sin depender en primera instancia de bases de datos de antivirus comerciales, sino del crudo análisis heurístico.
 
 ---
 
-## 🚀 Guía de Arranque Rápido
+## ⚡ Capacidades Core
 
-### 1. Preparación del Entorno
+### 🧬 Motor Heurístico Híbrido
+- **Inspección de Firmas Binarias:** Destruye cualquier intento de camuflaje cruzando las extensiones lógicas contra los verdaderos *Magic Numbers* hexadecimales del archivo.
+- **Análisis de Cabeceras PE Profundo:** Utiliza la librería `pefile` para destripar la estructura de binarios Windows, detectando anomalías, funciones importadas sospechosas (*VirtualAllocEx*, *CreateRemoteThread*) y midiendo la **Entropía de secciones** (>7.5) para exponer tácticas de *Ransomware* y código empaquetado/ofuscado.
+- **Escaneo Concurrente:** Procesamiento asíncrono con `ThreadPoolExecutor`, destruyendo cientos de binarios en apenas segundos. 
+
+### 🌐 Cyber Threat Intelligence Automatizada
+- Integración nativa con **VirusTotal (API v3)**. Una vez destripado el binario lógicamente, contrastamos sus hashes SHA-256 en tiempo real. 
+- Castigos heurísticos: Operamos en "Paranoia Máxima". Cualquier formato desconocido o discrepancia lanza las alarmas a nivel crítico. Todo positivo en redes CTI suma 100 puntos inmediatos al puntaje de amenaza.
+
+### 🧠 Inteligencia Forense Viva (Memoria ACID)
+- **Base de Datos SQLite Tolerante a Fallos:** Despídete de los archivos huérfanos. La memoria histórica del agente (conocimiento acumulativo de escaneos) reside en un motor transaccional en `C` altamente escalable.
+- **Correlación de Redes (Grafos 3D):** Identifica cuando un actor malicioso usa la misma IP en tres binarios diferentes, construyendo modelos matemáticos para predecir tácticas.
+
+### 📊 Visibilidad Ejecutiva
+- **Consola Hacker-Style:** Monitorización limpia CLI mediante librerías `Rich`.
+- **Informes PDF Automatizados:** Si lanzas el comando con la flag `--pdf`, el motor vomita el dictamen sumariado en un formato formal e imprimible.
+- **Centro de Control Streamlit:** Dashboard web robusto con visualizaciones *Dark-Cyber* interactivas, animaciones reactivas y mapeos de Grafos interactivos de las amenazas.
+
+---
+
+## 🛠️ Arquitectura y Despliegue CI/CD
+
+Integramos filosofía Zero-Trust. El proyecto es auditado por `GitHub Actions` disparando la suite `pytest` (`tests/test_core.py`) en cada Pull Request para asegurar que el core de validación entrópica nunca sea alterado.
+
+Contamos con una base `Dockerfile` oficial para aislar el escáner del sistema de archivos *Host*, evitando riesgos severos al detonar entornos de malware activo.
+
+---
+
+## 🚀 Guía Rápida de Despliegue
+
+### 1. Instalación Standard (Entorno Nativo)
+
 ```bash
-# Clonar y acceder
 git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git
 cd Shapeshifter-Detector
 
-# Crear y activar entorno virtual (Recomendado para evitar PEP 668)
+# Aislar dependencias (Evitar PEP-668 del OS base)
 python3 -m venv venv
 source venv/bin/activate
-
-# Instalar dependencias
 pip install -r requirements.txt
+
+# (Opcional) Renombra el .env.example a .env y añade tus claves de Cyber-Inteligencia.
 ```
 
-### 2. Uso del Agente (CLI)
-Analiza archivos individuales o directorios enteros. El motor paralelo asimilará cada escaneo a velocidades altas.
+### 2. Sandbox Mode (Docker)
+Altamente recomendado si vas a escanear carpetas reales extraídas de incidentes corporativos:
+```bash
+docker build -t shapeshifter-engine .
+docker run --rm -v /ruta/archivos/infectados:/target shapeshifter-engine /target
+```
+
+---
+
+## 💻 Control Operativo
+
+### A. Escáner de Terminal (CLI)
+Escanea de forma salvaje y genera directamente el PDF pericial.
 
 ```bash
-# Escanear un archivo base de prueba
-python3 main.py ruta/al/archivo.exe
-
-# Escaneo masivo con extracción de evidencias y dictamen PDF
-python3 main.py /descargas --output reporte.json --pdf
+# Analiza todo tu entorno de Descargas de un plumazo
+python3 main.py /home/user/Downloads --output mi_reporte.json --pdf
 ```
 
-### 3. Visualización de Inteligencia (Dashboard)
-Lanza el panel gráfico para ver qué ha aprendido el agente.
+### B. Módulo Gráfico SOC (Dashboard)
+Arranca el radar web y conecta tu inteligencia visual. Sube tu `.json` autogenerado y observa los mapas de relaciones en formato Grafo 3D.
 
 ```bash
 streamlit run dashboard.py
 ```
-*Carga el archivo `reports/mi_reporte.json` para ver las métricas y la pestaña de **"Inteligencia"**.*
-
-### 4. Validación del Sistema
-Verifica que el agente mantiene su **100% de precisión** con la suite de evaluación.
-
-```bash
-python3 evaluate_agent.py
-```
 
 ---
 
-## 📁 Estructura del "Cerebro"
-- `src/core.py`: Motor de detección, firmas e IoCs.
-- `src/memory.py`: Motor de BBDD transaccional `sqlite3` y correlación.
-- `src/cli.py`: Interfaz de terminal y lógica de multihilo asíncrono.
-- `Dockerfile`: Entorno Sandbox para virtualización operativa.
-- `tests/test_core.py`: Garantía de calidad mediante pruebas continuas.
-
----
-*Desarrollado para la ciberseguridad avanzada y análisis forense proactivo.*
+*Prototipado por Nex-OS | Diseñado para la investigación forense agresiva y proactiva.*
