@@ -39,18 +39,25 @@ Enriquecimiento de evidencias mediante integración nativa con redes de intelige
 
 ## ⚡ Guía de Despliegue Táctico
 
-### A. Ejecución en Sandbox (Recomendado)
-Para realizar análisis en entornos aislados, utiliza el montaje de volúmenes. Debes montar tanto la carpeta de **muestras** como la de **reportes** para persistir las evidencias y la inteligencia acumulada.
+### A. Ejecución en Sandbox (Docker)
+Ideal para auditar carpetas sospechosas sin riesgo de ejecución accidental en el host. El Sysadmin solo tiene que "apuntar" el volumen a la ruta que desea auditar:
 
 ```bash
-# 1. Construir la imagen
-docker build -t shapeshifter-engine .
-
-# 2. Ejecutar análisis persistiendo resultados
+# Formato: -v /RUTA/QUE/QUIERES/AUDITAR:/app/target
 docker run --rm \
-  -v $(pwd)/muestras:/app/target \
+  -v /var/www/html/uploads:/app/target \
   -v $(pwd)/reports:/app/reports \
-  shapeshifter-engine /app/target --pdf --output analisis_actual.json
+  shapeshifter-engine /app/target --pdf
+```
+*En este ejemplo, el motor escanea la carpeta de subidas de un servidor web directamente, guardando el PDF resultante en tu directorio actual.*
+
+---
+
+## 💻 Ejecución Nativa (Velocidad Total)
+Si no necesitas aislamiento y prefieres la máxima velocidad apuntando a rutas del sistema:
+
+```bash
+python3 main.py /ruta/log/linux --pdf --output reporte_infra.json
 ```
 
 ---
