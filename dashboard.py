@@ -122,25 +122,68 @@ if df is not None:
         st.table(df[df['threat_score'] > 40][['filename', 'threat_score']].sort_values(by='threat_score', ascending=False).head(10))
 
     with tabs[2]:
-        st.subheader("Grafo Relacional (Top Amenazas)")
+        st.subheader("🕸️ Red de Correlación Forense")
+        st.info("Visualizando solo amenazas críticas y conexiones de inteligencia.")
         if memory_data:
             nodes, edges = [], []
             an = memory_data['analyses']
-            for h, info in an.items():
-                nodes.append(Node(id=h, label=info['filename'][:15], size=20, color="#ff4b4b"))
-            
             iocs = memory_data['global_iocs']
+            
+            # Identificar IoCs que realmente se conectan con los archivos cargados
+            active_iocs = set()
             for t, vals in iocs.items():
                 for v, hs in vals.items():
-                    iid = f"i_{v}"
-                    nodes.append(Node(id=iid, label=v[:15], size=10, color="#00f2fe", shape="diamond"))
-                    for h in hs:
-                        if h in an: edges.append(Edge(source=h, target=iid))
+                    # Solo incluimos IoCs que conectan con al menos un archivo del análisis
+                    if any(h in an for h in hs):
+                        active_iocs.add((t, v))
+
+            # Añadir Nodos de Archivos (Solo los importantes)
+            for h, info in an.items():
+                threat = info.get('threat_score', 0)
+                color = "#ff4b4b" if threat > 70 else "#f63366"
+                nodes.append(Node(
+                    id=h, 
+                    label=info['filename'][:20], 
+                    size=25, 
+                    color=color,
+                    borderWidth=2,
+                    highlightColor="#ffffff"
+                ))
+            
+            # Añadir Nodos de IoCs y sus Aristas (Conexiones)
+            for t, v in active_iocs:
+                iid = f"i_{v}"
+                # Color por tipo de IoC
+                ioc_color = "#00f2fe" if t == "ips" else "#ffea00"
+                nodes.append(Node(
+                    id=iid, 
+                    label=f"{t.upper()}: {v[:15]}", 
+                    size=15, 
+                    color=ioc_color, 
+                    shape="diamond",
+                    font={'color': 'white', 'size': 12}
+                ))
+                
+                # Crear aristas hacia los archivos que contienen este IoC
+                for h in iocs[t][v]:
+                    if h in an:
+                        edges.append(Edge(source=h, target=iid, color="#555555", width=1))
             
             if nodes:
-                config = Config(width="100%", height=500, physics=False)
+                # Configuración de físicas para expansividad y legibilidad
+                config = Config(
+                    width="100%", 
+                    height=600, 
+                    physics=True, 
+                    hierarchical=False,
+                    stabilization=True,
+                    barnesHut={"gravitationalConstant": -3000, "springLength": 150},
+                    nodeHighlightBehavior=True,
+                    direction="UD"
+                )
                 agraph(nodes=nodes, edges=edges, config=config)
-            else: st.info("Escaneos limpios. No hay grafo que mostrar.")
+            else:
+                st.info("No hay suficientes correlaciones para generar una red.")
 
     with tabs[3]:
         st.dataframe(df, width="stretch")
