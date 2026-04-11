@@ -75,28 +75,40 @@ docker run --rm \
 3.  **Extracción de Evidencias:**
     *   Revisa la carpeta `reports/`. Encontrarás el **Dictamen Pericial PDF** y el log transaccional de la sesión.
     *   El motor habrá actualizado `memory.db` (SQLite) con los nuevos IoCs.
-4.  **Inteligencia Visual:**
-    *   Lanza el Dashboard: `streamlit run dashboard.py`.
-    *   Explora el **Grafo de Conocimiento** para identificar si esta muestra está vinculada a ataques previos.
 
-### B. Instalación Manual
+---
+
+## 📊 Dashboard de Inteligencia
+
+Para visualizar los hallazgos persistidos en SQLite:
+
+### Opción 1: Docker (Recomendado)
+Levanta el dashboard sin instalar dependencias locales:
 ```bash
-# Clonar y blindar entorno
-git clone https://github.com/Michel-Macias/Shapeshifter-Detector.git && cd Shapeshifter-Detector
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+docker run --rm -it \
+  -p 8501:8501 \
+  -v $(pwd)/reports:/app/reports \
+  --entrypoint streamlit \
+  shapeshifter-engine run dashboard.py --server.address 0.0.0.0
+```
+> Accede en: `http://localhost:8501`
+
+### Opción 2: Local (Host)
+```bash
+# Asegúrate de activar tu entorno virtual
+source venv/bin/activate
+streamlit run dashboard.py
 ```
 
 ---
 
-## 🕹️ Control de Misión
+## 🛠️ Solución de Problemas (FAQ)
 
-| Comando | Descripción |
-| :--- | :--- |
-| `python3 main.py <ruta>` | Inicia el escaneo asíncrono profundo. |
-| `python3 main.py <ruta> --pdf` | Escanea y genera Dictamen Pericial en PDF. |
-| `streamlit run dashboard.py` | Lanza el Centro de Control Visual (Correlaciones & Grafos). |
-| `pytest tests/` | Ejecuta la auditoría de integridad del motor. |
+### 1. Error: `externally-managed-environment`
+**Solución:** Estás en un sistema Linux moderno. Usa la **Opción 1 (Docker)** o crea un entorno virtual (`python3 -m venv venv && source venv/bin/activate`).
+
+### 2. Error: `no such column: cti_hits`
+**Solución:** Reconstruye la imagen (`docker build -t shapeshifter-engine .`). El motor reparará la base de datos automáticamente en su próximo arranque.
 
 ---
 
