@@ -3,6 +3,8 @@ import json
 import pandas as pd
 import os
 from src.ui_components import show_module_intro
+from streamlit_agraph import agraph, Node, Edge, Config
+from streamlit_extras.metric_cards import style_metric_cards
 
 # Configuración de página con estética Premium
 st.set_page_config(
@@ -204,45 +206,63 @@ if uploaded_file:
         
         # ... (Tab 1 and Tab 2 code stay the same) ...
 
+        # Estilizar las métricas visuales con Extras
+        style_metric_cards(background_color="rgba(255,255,255,0.05)", border_left_color="#00f2fe", border_color="rgba(0, 212, 255, 0.3)", box_shadow=False)
+
         with tab3:
-            st.subheader("🧠 Base de Conocimiento del Agente")
+            st.subheader("🧠 Grafo de Conocimiento (Correlaciones & IoCs)")
             if memory_data:
-                col_m1, col_m2 = st.columns([1, 2])
+                nodes = []
+                edges = []
                 
-                with col_m1:
-                    st.markdown("#### 📝 Archivos Conocidos")
-                    analyses = memory_data.get("analyses", {})
-                    st.write(f"El agente ha analizado **{len(analyses)}** archivos únicos.")
-                    
-                    # Mostrar tabla de archivos conocidos con Score
-                    memo_df = pd.DataFrame([
-                        {"Hash": h[:16]+"...", "Archivo": v["filename"], "Riesgo": v.get("threat_score", 0)} 
-                        for h, v in analyses.items()
-                    ])
-                    st.dataframe(memo_df, use_container_width=True)
+                analyses = memory_data.get("analyses", {})
+                global_iocs = memory_data.get("global_iocs", {})
+                
+                # Crear Nodos para Archivos
+                for file_hash, file_info in analyses.items():
+                    score = file_info.get("threat_score", 0)
+                    color = "#00ffdd" if score < 40 else "#ff4b4b"
+                    nodes.append(Node(id=file_hash, 
+                                      label=file_info["filename"][:20], 
+                                      size=25, 
+                                      color=color,
+                                      title=f"Score: {score}"))
+                                      
+                # Crear Nodos y Aristas para IoCs
+                ioc_colors = {"ips": "#ffb800", "domains": "#b800ff", "urls": "#ff00b8"}
+                
+                for ioc_type, items in global_iocs.items():
+                    color = ioc_colors.get(ioc_type, "#00d4ff")
+                    for item, hashes in items.items():
+                        ioc_id = f"ioc_{item}"
+                        # Anadir el nodo IoC
+                        nodes.append(Node(id=ioc_id, label=str(item)[:25], size=15, color=color, shape="hexagon"))
+                        # Relacionar el IoC con el archivo
+                        for h in hashes:
+                            if h in analyses:
+                                edges.append(Edge(source=h, target=ioc_id, color="rgba(0, 212, 255, 0.5)", width=2))
 
-                with col_m2:
-                    st.markdown("#### 🔗 Red de Correlaciones (IoCs)")
-                    global_iocs = memory_data.get("global_iocs", {})
-                    
-                    ioc_rows = []
-                    for ioc_type, items in global_iocs.items():
-                        for item, hashes in items.items():
-                            if len(hashes) > 1: # Solo mostrar si hay correlación
-                                ioc_rows.append({
-                                    "Tipo": ioc_type.upper(),
-                                    "IoC": item,
-                                    "Repeticiones": len(hashes),
-                                    "Hashes Vinculados": ", ".join([h[:8] for h in hashes])
-                                })
-                    
-                    if ioc_rows:
-                        st.table(pd.DataFrame(ioc_rows))
-                    else:
-                        st.info("No hay correlaciones cruzadas detectadas todavía. Analiza más archivos para poblar la memoria.")
+                # Configurar el motor de render de PyVis / Agraph
+                config = Config(width="100%",
+                                height=600,
+                                directed=False,
+                                physics=True,
+                                hierarchical=False,
+                                nodeHighlightBehavior=True,
+                                highlightColor="#F7A7A6",
+                                collapsible=True)
 
+                if nodes:
+                    st.markdown("""<p style="color: #8899a6; font-size:16px;">
+                    🟢 Archivo Limpio | 🔴 Amenaza | 🟡 IP | 🟣 Dominio/URL <br>
+                    Arrastra los nodos para explorar la topología de la amenaza.
+                    </p>""", unsafe_allow_html=True)
+                    
+                    agraph(nodes=nodes, edges=edges, config=config)
+                else:
+                    st.info("No hay suficientes datos para generar el grafo 3D.")
             else:
-                st.warning("No se encontró el archivo de memoria del agente en `reports/memory.json`.")
+                st.warning("No se encontró el archivo de memoria global para mapear grafos.")
 
         with tab4:
             st.subheader("Detalle Forense Completo")

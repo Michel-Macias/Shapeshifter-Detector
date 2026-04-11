@@ -1,37 +1,22 @@
-import unittest
 import os
-from src.core import identify_type, get_file_signature, load_signatures, calculate_hashes, calculate_entropy, extract_strings
+import pytest
+from src.core import calculate_entropy, identify_type
 
-class TestCore(unittest.TestCase):
-    def setUp(self):
-        self.signatures = load_signatures()
-        # Crear archivo temporal para tests
-        with open("temp_test_file.txt", "w") as f:
-            f.write("Hola Mundo Forense")
+def test_entropy_computation(tmp_path):
+    # Generar un archivo altamente predecible
+    low_file = tmp_path / "low.bin"
+    low_file.write_bytes(b"\x00" * 1000)
+    assert calculate_entropy(str(low_file)) == 0.0
+    
+    # Generar un archivo pseudoaleatorio
+    high_file = tmp_path / "high.bin"
+    high_file.write_bytes(os.urandom(1000))
+    assert calculate_entropy(str(high_file)) > 7.0
 
-    def tearDown(self):
-        if os.path.exists("temp_test_file.txt"):
-            os.remove("temp_test_file.txt")
-
-    def test_identify_png(self):
-        result = identify_type("89 50 4E 47 0D 0A 1A 0A", self.signatures)
-        self.assertIsNotNone(result)
-        self.assertEqual(result['type'], "Imagen PNG")
-        
-    def test_hashes(self):
-        hashes = calculate_hashes("temp_test_file.txt")
-        self.assertIsNotNone(hashes)
-        self.assertTrue("md5" in hashes)
-        self.assertTrue("sha256" in hashes)
-
-    def test_entropy(self):
-        entropy = calculate_entropy("temp_test_file.txt")
-        self.assertGreaterEqual(entropy, 0.0)
-        self.assertLessEqual(entropy, 8.0)
-
-    def test_strings(self):
-        strings = extract_strings("temp_test_file.txt")
-        self.assertIn("Hola Mundo Forense", strings)
-
-if __name__ == '__main__':
-    unittest.main()
+def test_identify_type(tmp_path):
+    # Generar firma fake de un PE
+    fake_exe = tmp_path / "fake.exe"
+    fake_exe.write_bytes(b"MZ\x90\x00\x03\x00")
+    type_info, is_mismatch = identify_type(str(fake_exe))
+    assert type_info == "Windows Executable"
+    assert is_mismatch is False

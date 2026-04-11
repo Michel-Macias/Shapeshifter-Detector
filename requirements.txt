@@ -6,3 +6,6 @@ pefile
 python-dotenv
 requests
 fpdf2
+streamlit-agraph
+streamlit-extras
+streamlit-lottie

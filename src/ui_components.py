@@ -1,6 +1,24 @@
 import streamlit as st
+import requests
+from streamlit_lottie import st_lottie
+
+def load_lottieurl(url: str):
+    try:
+        r = requests.get(url)
+        if r.status_code != 200:
+            return None
+        return r.json()
+    except:
+        return None
 
 def show_module_intro():
+    lottie_cyber = load_lottieurl("https://lottie.host/802619cd-99b3-46bc-becc-8519e91fb051/M0P06lW8S9.json") # Animación Radar Cyber
+    
+    if lottie_cyber:
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st_lottie(lottie_cyber, height=200, key="cyber_intro")
+            
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600;800;900&display=swap');
