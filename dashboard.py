@@ -56,9 +56,34 @@ def load_memory():
             return {"analyses": analyses, "global_iocs": iocs}
     except: return None
 
+def normalize_dataframe(df):
+    """Garantiza que el DataFrame tenga las columnas necesarias para el Dashboard."""
+    if df is None or df.empty: return df
+    
+    # Mapeo de nombres comunes (JSON vs DB)
+    rename_map = {
+        'path': 'filename',
+        'malicious_hits': 'cti_hits'
+    }
+    df = df.rename(columns=rename_map)
+    
+    # Asegurar columnas críticas con valores por defecto
+    required_cols = {
+        'threat_score': 0,
+        'cti_hits': 0,
+        'filename': 'Unknown',
+        'sha256': 'N/A'
+    }
+    
+    for col, default in required_cols.items():
+        if col not in df.columns:
+            df[col] = default
+            
+    return df
+
 show_module_intro()
 
-db_df = load_data_from_db()
+db_df = normalize_dataframe(load_data_from_db())
 memory_data = load_memory()
 
 with st.sidebar:
@@ -69,7 +94,8 @@ with st.sidebar:
         up = st.file_uploader("Subir JSON", type=["json"])
         if up: 
             raw = load_data(up)
-            if raw: df = pd.DataFrame(raw)
+            if raw: 
+                df = normalize_dataframe(pd.DataFrame(raw))
     else:
         df = db_df
     st.markdown("---")
