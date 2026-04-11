@@ -188,11 +188,7 @@ def main():
             
             for file in files:
                 file_path = os.path.join(root, file)
-                # Saltar archivos de más de 100MB por rendimiento (configurable)
-                if os.path.getsize(file_path) < 100 * 1024 * 1024:
-                    files_to_scan.append(file_path)
-                else:
-                    logger.warning(f"Archivo demasiado grande saltado: {file}")
+                files_to_scan.append(file_path)
         
         if not files_to_scan:
             logger.info("No se encontraron archivos validos para escanear.")
