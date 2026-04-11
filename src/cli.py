@@ -177,11 +177,27 @@ def main():
         scan_file(args.path, report_data)
     elif os.path.isdir(args.path):
         logger.info(f"Escaneando directorio: [bold]{args.path}[/bold]")
-        files_to_scan = []
-        for root, _, files in os.walk(args.path):
-            for file in files:
-                files_to_scan.append(os.path.join(root, file))
         
+        # Lista de directorios a ignorar para optimizar velocidad
+        EXCLUDE_DIRS = {'.git', 'venv', '.venv', 'node_modules', '__pycache__', '.pytest_cache'}
+        
+        files_to_scan = []
+        for root, dirs, files in os.walk(args.path):
+            # Modificar dirs in-place para que os.walk no entre en ellos
+            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+            
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Saltar archivos de más de 100MB por rendimiento (configurable)
+                if os.path.getsize(file_path) < 100 * 1024 * 1024:
+                    files_to_scan.append(file_path)
+                else:
+                    logger.warning(f"Archivo demasiado grande saltado: {file}")
+        
+        if not files_to_scan:
+            logger.info("No se encontraron archivos validos para escanear.")
+            return
+
         # Barra de progreso para directorios con ThreadPoolExecutor
         with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
             futures = [executor.submit(scan_file, fp, report_data) for fp in files_to_scan]

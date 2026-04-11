@@ -102,8 +102,11 @@ def calculate_entropy(filepath):
 def extract_strings(filepath, min_length=4):
     """
     Extrae cadenas de texto ASCII legibles del archivo de forma eficiente por bloques.
-    Mantiene el estado entre bloques para no romper cadenas en los límites de lectura.
+    Limitado a archivos de menos de 10MB para evitar degradación de rendimiento.
     """
+    if os.path.getsize(filepath) > 10 * 1024 * 1024:
+        return []
+
     strings = []
     current_string = ""
     
@@ -185,13 +188,10 @@ except ImportError:
 YARA_RULES_DIR = os.path.join(os.path.dirname(__file__), '..', 'rules')
 
 def analyze_vulnerabilities(filepath):
-    """
-    Realiza un análisis estático del archivo buscando patrones de vulnerabilidades
-    o indicadores de compromiso (IoC) comunes.
-    
-    Combina reglas basadas en Regex con escaneo YARA si está disponible.
-    """
-    
+    """Análisis estático simple (SAST) optimizado para archivos pequeños."""
+    if os.path.getsize(filepath) > 10 * 1024 * 1024:
+        return []
+
     # Excluir archivos de definición de tipos de Python
     if filepath.endswith('.pyi'):
         return []

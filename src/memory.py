@@ -23,7 +23,9 @@ class AgentKnowledgeBase:
 
     def _init_db(self):
         with self.lock:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=60) as conn:
+                conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("PRAGMA synchronous=NORMAL")
                 cursor = conn.cursor()
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS analyses (
@@ -46,7 +48,8 @@ class AgentKnowledgeBase:
 
     def get_analysis(self, sha256):
         with self.lock:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=60) as conn:
+                conn.execute("PRAGMA journal_mode=WAL")
                 cursor = conn.cursor()
                 cursor.execute("SELECT filename, threat_score, cti_hits, timestamp FROM analyses WHERE sha256 = ?", (sha256,))
                 row = cursor.fetchone()
@@ -66,7 +69,8 @@ class AgentKnowledgeBase:
         cti_hits = results.get("cti_hits", 0)
         
         with self.lock:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=60) as conn:
+                conn.execute("PRAGMA journal_mode=WAL")
                 cursor = conn.cursor()
                 cursor.execute('''
                     INSERT OR REPLACE INTO analyses (sha256, filename, threat_score, cti_hits, timestamp)
@@ -98,10 +102,27 @@ class AgentKnowledgeBase:
                             correlations[item] = hashes
         return correlations
 
+    def get_all_analyses(self):
+        with self.lock:
+            with sqlite3.connect(self.db_path, timeout=60) as conn:
+                conn.execute("PRAGMA journal_mode=WAL")
+                cursor = conn.cursor()
+                cursor.execute("SELECT sha256, filename, threat_score, cti_hits, timestamp FROM analyses")
+                analyses_dict = {}
+                for row in cursor.fetchall():
+                    analyses_dict[row[0]] = {
+                        "filename": row[1], 
+                        "threat_score": row[2], 
+                        "cti_hits": row[3],
+                        "timestamp": row[4]
+                    }
+                return analyses_dict
+
     def _export_to_json_unlocked(self):
         """Volcado rápido al disco en schema JSON clásico para Streamlit."""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=60) as conn:
+                conn.execute("PRAGMA journal_mode=WAL")
                 cursor = conn.cursor()
                 
                 cursor.execute("SELECT sha256, filename, threat_score, cti_hits, timestamp FROM analyses")
