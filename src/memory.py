@@ -156,11 +156,11 @@ class AgentKnowledgeBase:
                     
             state = {"analyses": analyses_dict, "global_iocs": iocs_dict}
             
-            # Escritura Atómica: primero a un temporal, luego renombrar
-            temp_path = self.json_path + ".tmp"
-            with open(temp_path, 'w', encoding='utf-8') as f:
+            # Escritura Atómica para evitar corrupción en el Dashboard
+            tmp_path = f"{self.json_path}.{threading.get_ident()}.tmp"
+            with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(state, f, indent=4)
-            os.replace(temp_path, self.json_path) # Operación atómica en Linux
+            os.replace(tmp_path, self.json_path)
             
         except Exception as e:
             logger.error(f"Falla crítica en reconstrucción de JSON Dashboard: {e}")

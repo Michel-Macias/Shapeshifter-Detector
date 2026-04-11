@@ -210,23 +210,28 @@ def main():
     else:
         logger.error(f"La ruta '[bold red]{args.path}[/bold red]' no existe.")
 
-    # Guardar reporte si se solicitó
-    if args.output and report_data is not None:
+    # Generar Marcas de Tiempo para reportes consistentes
+    report_ts = datetime.now().strftime('%Y%m%d%H%M')
+    
+    # 1. Guardar reporte JSON (Explícito o automático con PDF)
+    if (args.output or args.pdf) and report_data is not None:
         try:
-            # Si no es ruta absoluta, guardarlo en reports/
-            output_path = args.output
+            filename = args.output if args.output else f"Forensic_Data_{report_ts}.json"
+            output_path = filename
             if not os.path.isabs(output_path):
                 os.makedirs('reports', exist_ok=True)
-                output_path = os.path.join('reports', args.output)
+                output_path = os.path.join('reports', filename)
             
             with open(output_path, 'w') as f:
                 json.dump(report_data, f, indent=4)
-            logger.info(f"Reporte JSON guardado exitosamente en: [bold green]{output_path}[/bold green]")
+            logger.info(f"Reporte JSON guardado en: [bold green]{output_path}[/bold green]")
         except Exception as e:
             logger.error(f"Error al guardar el reporte JSON: {e}")
             
+    # 2. Guardar reporte PDF
     if args.pdf and report_data is not None:
-        generate_pdf_report(report_data)
+        pdf_filename = os.path.join('reports', f"ExSys_Report_{report_ts}.pdf")
+        generate_pdf_report(report_data, pdf_filename)
 
 if __name__ == "__main__":
     main()
