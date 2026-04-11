@@ -95,7 +95,7 @@ class AgentKnowledgeBase:
                             ''', (ioc_type, item, sha256))
                 conn.commit()
                 
-            # Exportar el volcado para compatibilidad con el Dashboard
+            # Exportar el volcado para compatibilidad con el Dashboard (Dentro del lock)
             self._export_to_json_unlocked()
 
     def find_correlations(self, iocs):
@@ -128,7 +128,7 @@ class AgentKnowledgeBase:
                 return analyses_dict
 
     def _export_to_json_unlocked(self):
-        """Volcado rápido al disco en schema JSON clásico para Streamlit."""
+        """Volcado rápido al disco en schema JSON clásico para Streamlit con escritura atómica."""
         try:
             with sqlite3.connect(self.db_path, timeout=60) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
@@ -156,8 +156,12 @@ class AgentKnowledgeBase:
                     
             state = {"analyses": analyses_dict, "global_iocs": iocs_dict}
             
-            with open(self.json_path, 'w', encoding='utf-8') as f:
+            # Escritura Atómica: primero a un temporal, luego renombrar
+            temp_path = self.json_path + ".tmp"
+            with open(temp_path, 'w', encoding='utf-8') as f:
                 json.dump(state, f, indent=4)
+            os.replace(temp_path, self.json_path) # Operación atómica en Linux
+            
         except Exception as e:
             logger.error(f"Falla crítica en reconstrucción de JSON Dashboard: {e}")
 
