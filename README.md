@@ -40,10 +40,31 @@ Enriquecimiento de evidencias mediante integración nativa con redes de intelige
 ## ⚡ Guía de Despliegue Táctico
 
 ### A. Ejecución en Sandbox (Recomendado)
+Para realizar análisis en entornos aislados, utiliza el montaje de volúmenes. Debes montar tanto la carpeta de **muestras** como la de **reportes** para persistir las evidencias y la inteligencia acumulada.
+
 ```bash
+# 1. Construir la imagen
 docker build -t shapeshifter-engine .
-docker run --rm -v $(pwd)/samples:/app/target shapeshifter-engine /app/target --pdf
+
+# 2. Ejecutar análisis persistiendo resultados
+docker run --rm \
+  -v $(pwd)/muestras:/app/target \
+  -v $(pwd)/reports:/app/reports \
+  shapeshifter-engine /app/target --pdf --output analisis_actual.json
 ```
+
+---
+
+## 🧭 Flujo de Trabajo Operativo
+
+1.  **Ingesta de Muestras:** Introduce los archivos sospechosos en la carpeta `./muestras`.
+2.  **Detonación SAST:** Ejecuta el motor (vía Docker o nativo). El agente diseccionará el binario y consultará CTI (VirusTotal) enriqueciendo su base de datos corporativa.
+3.  **Extracción de Evidencias:**
+    *   Revisa la carpeta `reports/`. Encontrarás el **Dictamen Pericial PDF** y el log transaccional de la sesión.
+    *   El motor habrá actualizado `memory.db` (SQLite) con los nuevos IoCs.
+4.  **Inteligencia Visual:**
+    *   Lanza el Dashboard: `streamlit run dashboard.py`.
+    *   Explora el **Grafo de Conocimiento** para identificar si esta muestra está vinculada a ataques previos.
 
 ### B. Instalación Manual
 ```bash
