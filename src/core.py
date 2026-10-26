@@ -48,7 +48,7 @@ def calculate_hashes(filepath):
     """
     Calcula los hashes MD5 y SHA256 del archivo.
     """
-    md5_hash = hashlib.md5()
+    md5_hash = hashlib.md5(usedforsecurity=False)  # nosec B324
     sha256_hash = hashlib.sha256()
     
     try:
