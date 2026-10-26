@@ -1,6 +1,6 @@
 import os
-import pytest
-from src.core import calculate_entropy, identify_type, get_file_signature, check_mismatch
+from src.core import calculate_entropy, identify_type, get_file_signature
+from src.cli import check_mismatch
 
 def test_entropy_computation(tmp_path):
     # Generar un archivo altamente predecible
