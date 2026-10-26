@@ -1,6 +1,6 @@
 import os
 import pytest
-from src.core import calculate_entropy, identify_type
+from src.core import calculate_entropy, identify_type, get_file_signature, check_mismatch
 
 def test_entropy_computation(tmp_path):
     # Generar un archivo altamente predecible
@@ -17,6 +17,8 @@ def test_identify_type(tmp_path):
     # Generar firma fake de un PE
     fake_exe = tmp_path / "fake.exe"
     fake_exe.write_bytes(b"MZ\x90\x00\x03\x00")
-    type_info, is_mismatch = identify_type(str(fake_exe))
-    assert type_info == "Windows Executable"
+    hex_sig = get_file_signature(str(fake_exe))
+    type_info = identify_type(hex_sig)
+    is_mismatch = check_mismatch(str(fake_exe), type_info)
+    assert type_info["type"] == "Ejecutable de Windows (EXE/DLL)"
     assert is_mismatch is False
