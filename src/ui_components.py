@@ -4,7 +4,7 @@ from streamlit_lottie import st_lottie
 
 def load_lottieurl(url: str):
     try:
-        r = requests.get(url)
+        r = requests.get(url, timeout=10)
         if r.status_code != 200:
             return None
         return r.json()
